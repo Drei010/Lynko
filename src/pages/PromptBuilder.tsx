@@ -51,78 +51,77 @@ Your mission is to engage in personalized conversations that lead to one of two 
       <Navigation />
 
       <main className="pt-32 pb-20 px-6">
+        {/* Main Content */}
+        <div className="max-w-[1800px] mx-auto px-6 py-8">
+          <div className="grid lg:grid-cols-[1fr,400px] gap-8">
+            {/* Left Column - Context and First Message */}
+            <div className="space-y-6">
+              {/* First Message */}
+              <div className="space-y-3">
+                <label
+                  className="text-sm font-medium text-gray-300"
+                  data-testid="text-first-message-label"
+                >
+                  First Message
+                </label>
+                <Textarea
+                  value={firstMessage}
+                  onChange={(e) => setFirstMessage(e.target.value)}
+                  placeholder="Enter the first message..."
+                  className="min-h-[100px] bg-[#1a1a1a] border-gray-700 text-white resize-none"
+                  data-testid="input-first-message"
+                />
+              </div>
 
-      {/* Main Content */}
-      <div className="max-w-[1800px] mx-auto px-6 py-8">
-        <div className="grid lg:grid-cols-[1fr,400px] gap-8">
-          {/* Left Column - Context and First Message */}
-          <div className="space-y-6">
-            {/* First Message */}
-            <div className="space-y-3">
-              <label
-                className="text-sm font-medium text-gray-300"
-                data-testid="text-first-message-label"
-              >
-                First Message
-              </label>
-              <Textarea
-                value={firstMessage}
-                onChange={(e) => setFirstMessage(e.target.value)}
-                placeholder="Enter the first message..."
-                className="min-h-[100px] bg-[#1a1a1a] border-gray-700 text-white resize-none"
-                data-testid="input-first-message"
-              />
+              {/* Context */}
+              <div className="space-y-3">
+                <label
+                  className="text-sm font-medium text-gray-300"
+                  data-testid="text-context-label"
+                >
+                  Context
+                </label>
+                <Textarea
+                  value={context}
+                  onChange={(e) => setContext(e.target.value)}
+                  className="min-h-[600px] bg-[#1a1a1a] border-gray-700 text-white font-mono text-sm resize-none"
+                  data-testid="input-context"
+                />
+              </div>
             </div>
 
-            {/* Context */}
-            <div className="space-y-3">
-              <label
-                className="text-sm font-medium text-gray-300"
-                data-testid="text-context-label"
-              >
-                Context
-              </label>
-              <Textarea
-                value={context}
-                onChange={(e) => setContext(e.target.value)}
-                className="min-h-[600px] bg-[#1a1a1a] border-gray-700 text-white font-mono text-sm resize-none"
-                data-testid="input-context"
-              />
-            </div>
-          </div>
+            {/* Right Column - Variables */}
+            <div className="space-y-6">
+              {/* GPT Version */}
+              <div className="space-y-3">
+                <label
+                  className="text-sm font-medium text-gray-300"
+                  data-testid="text-gpt-label"
+                >
+                  Models
+                </label>
+                <Button
+                  variant="outline"
+                  className="w-full justify-between bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]"
+                  data-testid="button-gpt-version"
+                >
+                  GPT-4.1
+                </Button>
+              </div>
 
-          {/* Right Column - Variables */}
-          <div className="space-y-6">
-            {/* GPT Version */}
-            <div className="space-y-3">
-              <label
-                className="text-sm font-medium text-gray-300"
-                data-testid="text-gpt-label"
-              >
-                Models
-              </label>
-              <Button
-                variant="outline"
-                className="w-full justify-between bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]"
-                data-testid="button-gpt-version"
-              >
-                GPT-4.1
-              </Button>
+              {/* Test Prompt Button */}
+              <Link to="/chatbot-test" data-testid="link-test-prompt">
+                <Button
+                  className="w-full bg-white text-black hover:bg-gray-200"
+                  data-testid="button-test-prompt"
+                >
+                  Test Prompt
+                </Button>
+              </Link>
             </div>
-
-            {/* Test Prompt Button */}
-            <Link to="/chatbot-test" data-testid="link-test-prompt">
-              <Button
-                className="w-full bg-white text-black hover:bg-gray-200"
-                data-testid="button-test-prompt"
-              >
-                Test Prompt
-              </Button>
-            </Link>
           </div>
         </div>
-      </div>
-        </main>
+      </main>
     </div>
   );
 };
