@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
@@ -71,7 +77,9 @@ const Auth = () => {
         setPassword("");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Registration failed");
+      toast.error(
+        error instanceof Error ? error.message : "Registration failed",
+      );
       console.error("Registration error:", error);
     } finally {
       setIsLoading(false);
@@ -144,20 +152,20 @@ const Auth = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       <div className="min-h-screen flex items-center justify-center p-4 pt-32">
         {/* Background gradient overlay */}
-        <div 
+        <div
           className="fixed inset-0 -z-10 opacity-50"
-          style={{ 
+          style={{
             background: "var(--gradient-bg)",
           }}
         />
-        
+
         {/* Accent glow effect */}
-        <div 
+        <div
           className="fixed top-0 right-0 w-[500px] h-[500px] -z-10 opacity-20 blur-3xl rounded-full"
-          style={{ 
+          style={{
             background: "var(--gradient-accent)",
           }}
         />
@@ -170,26 +178,27 @@ const Auth = () => {
                 <span className="text-2xl">✅</span>
               </div>
               <CardTitle className="text-2xl font-bold">Logged In!</CardTitle>
-              <CardDescription>You are successfully authenticated</CardDescription>
+              <CardDescription>
+                You are successfully authenticated
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="rounded-lg border border-border bg-secondary/30 p-4">
-                <Label className="text-sm text-muted-foreground">Token Preview:</Label>
+                <Label className="text-sm text-muted-foreground">
+                  Token Preview:
+                </Label>
                 <p className="mt-2 font-mono text-sm break-all text-foreground">
                   {token.substring(0, 10)}...
                 </p>
               </div>
               <div className="flex gap-3">
                 <Link to="/" className="flex-1">
-                  <Button 
-                    variant="outline"
-                    className="w-full"
-                  >
+                  <Button variant="outline" className="w-full">
                     Back to Home
                   </Button>
                 </Link>
-                <Button 
-                  onClick={handleLogout} 
+                <Button
+                  onClick={handleLogout}
                   className="flex-1"
                   variant="outline"
                 >
@@ -201,68 +210,68 @@ const Auth = () => {
         ) : (
           // Unauthenticated state - show login form
           <Card className="w-full max-w-md border-border bg-card/50 backdrop-blur-sm">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Welcome Back
-            </CardTitle>
-            <CardDescription>
-              Enter your credentials to access your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Email input field */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyPress={handleKeyPress}
-                disabled={isLoading}
-                className="bg-background/50"
-              />
-            </div>
+            <CardHeader className="text-center">
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Welcome Back
+              </CardTitle>
+              <CardDescription>
+                Enter your credentials to access your account
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Email input field */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  disabled={isLoading}
+                  className="bg-background/50"
+                />
+              </div>
 
-            {/* Password input field */}
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyPress={handleKeyPress}
-                disabled={isLoading}
-                className="bg-background/50"
-              />
-            </div>
+              {/* Password input field */}
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  disabled={isLoading}
+                  className="bg-background/50"
+                />
+              </div>
 
-            {/* Action buttons */}
-            <div className="flex gap-3 pt-2">
-              <Button
-                onClick={handleRegister}
-                disabled={isLoading}
-                variant="outline"
-                className="flex-1"
-              >
-                Register
-              </Button>
-              <Button
-                onClick={handleLogin}
-                disabled={isLoading}
-                className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90"
-              >
-                {isLoading ? "Loading..." : "Login"}
-              </Button>
-            </div>
+              {/* Action buttons */}
+              <div className="flex gap-3 pt-2">
+                <Button
+                  onClick={handleRegister}
+                  disabled={isLoading}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Register
+                </Button>
+                <Button
+                  onClick={handleLogin}
+                  disabled={isLoading}
+                  className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                >
+                  {isLoading ? "Loading..." : "Login"}
+                </Button>
+              </div>
 
-            {/* Info text for beginners */}
-            <p className="text-xs text-center text-muted-foreground pt-4">
-              Backend API should be running at localhost:5000
-            </p>
+              {/* Info text for beginners */}
+              <p className="text-xs text-center text-muted-foreground pt-4">
+                Backend API should be running at localhost:5000
+              </p>
             </CardContent>
           </Card>
         )}
