@@ -1,7 +1,14 @@
 import { useState } from "react";
+import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -10,18 +17,18 @@ const ChatbotTest = () => {
     {
       id: 1,
       type: "ai",
-      text: "Hi Philips, saw your 'cold outreach playbook' post where you broke down your five reply rates. Curious—what's been your biggest challenge scaling that level of personalization lately?"
+      text: "Hi Philips, saw your 'cold outreach playbook' post where you broke down your five reply rates. Curious—what's been your biggest challenge scaling that level of personalization lately?",
     },
     {
       id: 2,
       type: "user",
-      text: "Hi Rian, it's taking way too much time to our team to personalise everything"
+      text: "Hi Rian, it's taking way too much time to our team to personalise everything",
     },
     {
       id: 3,
       type: "ai",
-      text: "Makes sense. Most teams get bogged down by manual research and writing. Ever considered letting an handle those LinkedIn conversations 1:1 without sacrificing that personal touch?"
-    }
+      text: "Makes sense. Most teams get bogged down by manual research and writing. Ever considered letting an handle those LinkedIn conversations 1:1 without sacrificing that personal touch?",
+    },
   ]);
 
   const [product, setProduct] = useState("Kakiyo");
@@ -32,44 +39,32 @@ const ChatbotTest = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Header */}
-      <div className="border-b border-gray-800 px-6 py-4">
-        <div className="flex items-center justify-between max-w-[1800px] mx-auto">
-          <div className="flex items-center gap-4">
-            <Link to="/prompt-builder" data-testid="link-back">
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" data-testid="button-back">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl font-semibold" data-testid="text-title">Edit Prompt: Kakiyo Main</h1>
-              <p className="text-sm text-gray-400" data-testid="text-subtitle">Edit your prompt content and variables</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" className="text-red-500 hover:text-red-400 hover:bg-red-500/10" data-testid="button-delete">
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </Button>
-            <Button className="bg-white text-black hover:bg-gray-200" data-testid="button-save">
-              Save Changes
-            </Button>
-          </div>
-        </div>
-      </div>
-
+      <Navigation />
       {/* Main Content */}
       <div className="max-w-[1800px] mx-auto px-6 py-8">
         <div className="grid lg:grid-cols-[1fr,400px] gap-8">
           {/* Left Column - Test Conversation */}
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold" data-testid="text-conversation-title">Test Conversation</h2>
+              <h2
+                className="text-lg font-semibold"
+                data-testid="text-conversation-title"
+              >
+                Test Conversation
+              </h2>
               <div className="flex gap-2">
-                <Button variant="outline" className="bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]" data-testid="button-new-test">
+                <Button
+                  variant="outline"
+                  className="bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]"
+                  data-testid="button-new-test"
+                >
                   New Test
                 </Button>
-                <Button variant="outline" className="bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]" data-testid="button-edit-mode">
+                <Button
+                  variant="outline"
+                  className="bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]"
+                  data-testid="button-edit-mode"
+                >
                   Edit Test Mode
                 </Button>
               </div>
@@ -88,11 +83,17 @@ const ChatbotTest = () => {
                   data-testid={`message-${message.id}`}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs text-gray-400" data-testid={`text-sender-${message.id}`}>
+                    <span
+                      className="text-xs text-gray-400"
+                      data-testid={`text-sender-${message.id}`}
+                    >
                       {message.type === "ai" ? "AI Assistant" : "User"}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-200" data-testid={`text-message-${message.id}`}>
+                  <p
+                    className="text-sm text-gray-200"
+                    data-testid={`text-message-${message.id}`}
+                  >
                     {message.text}
                   </p>
                 </div>
@@ -102,42 +103,49 @@ const ChatbotTest = () => {
 
           {/* Right Column - Test Configuration */}
           <div className="space-y-6">
-            {/* GPT Version */}
-            <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-300" data-testid="text-gpt-label">
-                GPT-4.1
-              </label>
-              <Button variant="outline" className="w-full justify-between bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]" data-testid="button-gpt-version">
-                GPT-4.1
-              </Button>
-            </div>
-
-            {/* Test Prompt Button */}
-            <Button className="w-full bg-white text-black hover:bg-gray-200" data-testid="button-test-prompt">
-              Test Prompt
-            </Button>
-
             {/* Test Configuration */}
             <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-300" data-testid="text-config-title">Test Configuration</h3>
+              <h3
+                className="text-sm font-medium text-gray-300"
+                data-testid="text-config-title"
+              >
+                Test Configuration
+              </h3>
 
               {/* Product */}
               <div className="space-y-2">
-                <label className="text-xs text-gray-400" data-testid="text-product-label">Product</label>
+                <label
+                  className="text-xs text-gray-400"
+                  data-testid="text-product-label"
+                >
+                  Product
+                </label>
                 <Select value={product} onValueChange={setProduct}>
-                  <SelectTrigger className="bg-[#1a1a1a] border-gray-700 text-white" data-testid="select-product">
+                  <SelectTrigger
+                    className="bg-[#1a1a1a] border-gray-700 text-white"
+                    data-testid="select-product"
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Kakiyo" data-testid="select-item-kakiyo">Kakiyo</SelectItem>
-                    <SelectItem value="Other" data-testid="select-item-other">Other</SelectItem>
+                    <SelectItem value="Kakiyo" data-testid="select-item-kakiyo">
+                      Kakiyo
+                    </SelectItem>
+                    <SelectItem value="Other" data-testid="select-item-other">
+                      Other
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Goal */}
               <div className="space-y-2">
-                <label className="text-xs text-gray-400" data-testid="text-goal-label">goal</label>
+                <label
+                  className="text-xs text-gray-400"
+                  data-testid="text-goal-label"
+                >
+                  goal
+                </label>
                 <Input
                   value={goal}
                   onChange={(e) => setGoal(e.target.value)}
@@ -148,7 +156,12 @@ const ChatbotTest = () => {
 
               {/* Goal Link */}
               <div className="space-y-2">
-                <label className="text-xs text-gray-400" data-testid="text-goal-link-label">goal_link</label>
+                <label
+                  className="text-xs text-gray-400"
+                  data-testid="text-goal-link-label"
+                >
+                  goal_link
+                </label>
                 <Input
                   value={goalLink}
                   onChange={(e) => setGoalLink(e.target.value)}
@@ -159,7 +172,12 @@ const ChatbotTest = () => {
 
               {/* Fallback */}
               <div className="space-y-2">
-                <label className="text-xs text-gray-400" data-testid="text-fallback-label">fallback</label>
+                <label
+                  className="text-xs text-gray-400"
+                  data-testid="text-fallback-label"
+                >
+                  fallback
+                </label>
                 <Input
                   value={fallback}
                   onChange={(e) => setFallback(e.target.value)}
@@ -170,7 +188,12 @@ const ChatbotTest = () => {
 
               {/* Fallback Link */}
               <div className="space-y-2">
-                <label className="text-xs text-gray-400" data-testid="text-fallback-link-label">fallback_link</label>
+                <label
+                  className="text-xs text-gray-400"
+                  data-testid="text-fallback-link-label"
+                >
+                  fallback_link
+                </label>
                 <Input
                   value={fallbackLink}
                   onChange={(e) => setFallbackLink(e.target.value)}
@@ -178,6 +201,13 @@ const ChatbotTest = () => {
                   data-testid="input-fallback-link"
                 />
               </div>
+              {/* Test Prompt Button */}
+              <Button
+                className="w-full bg-white text-black hover:bg-gray-200"
+                data-testid="button-test-prompt"
+              >
+                Test Prompt
+              </Button>
             </div>
           </div>
         </div>
