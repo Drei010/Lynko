@@ -19,17 +19,17 @@ const Navigation = () => {
 
           {/* Navigation links */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="#" className="text-white/90 hover:text-white transition-colors">
-              Community
+            <Link to="/prompt-builder" className="text-white/90 hover:text-white transition-colors" data-testid="link-prompt-builder">
+              Prompt Builder
             </Link>
-            <Link to="#" className="text-white/90 hover:text-white transition-colors">
+            <Link to="/chatbot-test" className="text-white/90 hover:text-white transition-colors" data-testid="link-chatbot-test">
+              Chatbot Test
+            </Link>
+            <Link to="#" className="text-white/90 hover:text-white transition-colors" data-testid="link-pricing">
               Pricing
             </Link>
-            <Link to="#" className="text-white/90 hover:text-white transition-colors">
+            <Link to="#" className="text-white/90 hover:text-white transition-colors" data-testid="link-resources">
               Resources
-            </Link>
-            <Link to="#" className="text-white/90 hover:text-white transition-colors">
-              Developers
             </Link>
           </div>
 
