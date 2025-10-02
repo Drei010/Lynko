@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ const ChatbotTest = () => {
     },
   ]);
 
+  const navigate = useNavigate();
   const [inputMessage, setInputMessage] = useState("");
   const [product, setProduct] = useState("Kakiyo");
   const [goal, setGoal] = useState("Book a demo of the product");
@@ -88,11 +90,12 @@ const ChatbotTest = () => {
                   New Test
                 </Button>
                 <Button
+                  onClick={() => navigate("/prompt-builder")}
                   variant="outline"
                   className="bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]"
                   data-testid="button-edit-mode"
                 >
-                  Edit Test Mode
+                  Edit Prompt
                 </Button>
               </div>
             </div>
