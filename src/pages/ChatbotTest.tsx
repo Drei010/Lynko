@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -71,34 +72,36 @@ const ChatbotTest = () => {
             </div>
 
             {/* Conversation Messages */}
-            <div className="space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`p-4 rounded-lg ${
-                    message.type === "ai"
-                      ? "bg-[#1a1a1a] border border-gray-800"
-                      : "bg-white/5 border border-gray-700 ml-12"
-                  }`}
-                  data-testid={`message-${message.id}`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <span
-                      className="text-xs text-gray-400"
-                      data-testid={`text-sender-${message.id}`}
-                    >
-                      {message.type === "ai" ? "AI Assistant" : "User"}
-                    </span>
-                  </div>
-                  <p
-                    className="text-sm text-gray-200"
-                    data-testid={`text-message-${message.id}`}
+            <ScrollArea className="h-[600px] pr-4">
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`p-4 rounded-lg ${
+                      message.type === "ai"
+                        ? "bg-[#1a1a1a] border border-gray-800"
+                        : "bg-white/5 border border-gray-700 ml-12"
+                    }`}
+                    data-testid={`message-${message.id}`}
                   >
-                    {message.text}
-                  </p>
-                </div>
-              ))}
-            </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className="text-xs text-gray-400"
+                        data-testid={`text-sender-${message.id}`}
+                      >
+                        {message.type === "ai" ? "AI Assistant" : "User"}
+                      </span>
+                    </div>
+                    <p
+                      className="text-sm text-gray-200"
+                      data-testid={`text-message-${message.id}`}
+                    >
+                      {message.text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
 
             {/* Chat Input Area */}
             <div className="flex gap-2 items-end">
