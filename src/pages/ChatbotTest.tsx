@@ -9,8 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const ChatbotTest = () => {
   const [messages, setMessages] = useState([

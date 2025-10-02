@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { ArrowLeft, Trash2, Plus } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { Link } from "react-router-dom";
 
@@ -30,21 +28,6 @@ Your mission is to engage in personalized conversations that lead to one of two 
 12. For company names in CAPS: capitalize first letter only`);
 
   const [firstMessage, setFirstMessage] = useState("");
-  const [requiredVars, setRequiredVars] = useState([
-    "or.prospectDescription",
-    "sent.LinkDescription",
-  ]);
-  const [optionalVars, setOptionalVars] = useState([
-    "or.additionalInfo",
-    "or.prospectName",
-    "or.companyName",
-  ]);
-  const [customVars, setCustomVars] = useState([
-    "or.calendly",
-    "or.goalLink",
-    "or.fallbackLINK",
-    "or.fallbackLink",
-  ]);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
