@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Navigation from "@/components/Navigation";
 import { Link } from "react-router-dom";
 
@@ -75,7 +82,7 @@ Your mission is to engage in personalized conversations that lead to one of two 
 
             {/* Right Column - Variables */}
             <div className="space-y-6">
-              {/* GPT Version */}
+              {/* AI Models */}
               <div className="space-y-3">
                 <label
                   className="text-sm font-medium text-gray-300"
@@ -83,13 +90,31 @@ Your mission is to engage in personalized conversations that lead to one of two 
                 >
                   Models
                 </label>
-                <Button
-                  variant="outline"
-                  className="w-full justify-between bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]"
-                  data-testid="button-gpt-version"
-                >
-                  GPT-4.1
-                </Button>
+                <Select defaultValue="gpt-4o-mini">
+                  <SelectTrigger
+                    className="bg-[#1a1a1a] border-gray-700 text-white"
+                    data-testid="select-model"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gpt-4o-mini" data-testid="select-item-gpt-4o-mini">
+                      GPT-4o Mini
+                    </SelectItem>
+                    <SelectItem value="gpt-3.5-turbo" data-testid="select-item-gpt-3.5">
+                      GPT-3.5 Turbo
+                    </SelectItem>
+                    <SelectItem value="llama-3.2" data-testid="select-item-llama">
+                      Llama 3.2
+                    </SelectItem>
+                    <SelectItem value="gemini-flash" data-testid="select-item-gemini">
+                      Gemini Flash
+                    </SelectItem>
+                    <SelectItem value="claude-haiku" data-testid="select-item-claude">
+                      Claude Haiku
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Test Prompt Button */}
