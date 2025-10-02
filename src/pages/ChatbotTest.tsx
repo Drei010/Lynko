@@ -40,8 +40,10 @@ const ChatbotTest = () => {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <Navigation />
-      {/* Main Content */}
-      <div className="max-w-[1800px] mx-auto px-6 py-8">
+      
+      <main className="pt-20">
+        {/* Main Content */}
+        <div className="max-w-[1800px] mx-auto px-6 py-8">
         <div className="grid lg:grid-cols-[1fr,400px] gap-8">
           {/* Left Column - Test Conversation */}
           <div className="space-y-6">
@@ -212,6 +214,7 @@ const ChatbotTest = () => {
           </div>
         </div>
       </div>
+      </main>
     </div>
   );
 };
