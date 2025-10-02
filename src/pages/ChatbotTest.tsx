@@ -30,11 +30,31 @@ const ChatbotTest = () => {
     },
   ]);
 
+  const [inputMessage, setInputMessage] = useState("");
   const [product, setProduct] = useState("Kakiyo");
   const [goal, setGoal] = useState("Book a demo of the product");
   const [goalLink, setGoalLink] = useState("https://cal.com/kakiyo");
   const [fallback, setFallback] = useState("visit website");
   const [fallbackLink, setFallbackLink] = useState("https://kakiyo.com");
+
+  const handleSendMessage = () => {
+    if (inputMessage.trim() === "") return;
+
+    const newMessage = {
+      id: messages.length + 1,
+      type: "user" as const,
+      text: inputMessage,
+    };
+
+    setMessages([...messages, newMessage]);
+    setInputMessage("");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -106,11 +126,15 @@ const ChatbotTest = () => {
             {/* Chat Input Area */}
             <div className="flex gap-2 items-end">
               <Input
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
                 className="bg-[#1a1a1a] border-gray-700 text-white flex-1"
                 data-testid="input-chat-message"
               />
               <Button
+                onClick={handleSendMessage}
                 className="bg-white text-black hover:bg-gray-200 px-6"
                 data-testid="button-send-message"
               >
