@@ -99,6 +99,21 @@ const ChatbotTest = () => {
                 </div>
               ))}
             </div>
+
+            {/* Chat Input Area */}
+            <div className="flex gap-2 items-end">
+              <Input
+                placeholder="Type your message..."
+                className="bg-[#1a1a1a] border-gray-700 text-white flex-1"
+                data-testid="input-chat-message"
+              />
+              <Button
+                className="bg-white text-black hover:bg-gray-200 px-6"
+                data-testid="button-send-message"
+              >
+                Send
+              </Button>
+            </div>
           </div>
 
           {/* Right Column - Test Configuration */}
