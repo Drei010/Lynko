@@ -56,6 +56,11 @@ const ChatbotTest = () => {
     }
   };
 
+  const handleNewTest = () => {
+    setMessages([]);
+    setInputMessage("");
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <Navigation />
@@ -75,6 +80,7 @@ const ChatbotTest = () => {
               </h2>
               <div className="flex gap-2">
                 <Button
+                  onClick={handleNewTest}
                   variant="outline"
                   className="bg-[#1a1a1a] border-gray-700 text-white hover:bg-[#2a2a2a]"
                   data-testid="button-new-test"
