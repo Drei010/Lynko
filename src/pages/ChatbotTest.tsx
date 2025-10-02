@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -11,25 +11,65 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { apiService } from "@/services/api";
+import { toast } from "sonner";
 
 const ChatbotTest = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: "ai",
-      text: "Hi Philips, saw your 'cold outreach playbook' post where you broke down your five reply rates. Curious—what's been your biggest challenge scaling that level of personalization lately?",
-    },
-    {
-      id: 2,
-      type: "user",
-      text: "Hi Rian, it's taking way too much time to our team to personalise everything",
-    },
-    {
-      id: 3,
-      type: "ai",
-      text: "Makes sense. Most teams get bogged down by manual research and writing. Ever considered letting an handle those LinkedIn conversations 1:1 without sacrificing that personal touch?",
-    },
-  ]);
+  const [messages, setMessages] = useState<Array<{id: number; role: 'user' | 'assistant'; content: string}>>([]);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<number | null>(null);
+
+  // Initialize conversation and load messages
+  useEffect(() => {
+    const initializeConversation = async () => {
+      const storedConversationId = localStorage.getItem('lynko_conversation_id');
+      const storedFirstMessage = localStorage.getItem('lynko_first_message');
+      
+      if (storedConversationId && storedFirstMessage) {
+        setConversationId(parseInt(storedConversationId));
+        
+        // Send the first message to start the conversation
+        try {
+          setIsLoading(true);
+          const response = await apiService.sendMessage(parseInt(storedConversationId), storedFirstMessage);
+          
+          setMessages([
+            {
+              id: response.user_message.id,
+              role: response.user_message.role,
+              content: response.user_message.content,
+            },
+            {
+              id: response.ai_message.id,
+              role: response.ai_message.role,
+              content: response.ai_message.content,
+            }
+          ]);
+          
+          // Clear stored data
+          localStorage.removeItem('lynko_first_message');
+          localStorage.removeItem('lynko_conversation_id');
+        } catch (error) {
+          console.error('Error sending first message:', error);
+          toast.error('Failed to start conversation');
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        // Fallback to default messages if no conversation setup
+        setMessages([
+          {
+            id: 1,
+            role: "assistant",
+            content: "Hi! I'm ready to help you test your AI conversation. Please set up a conversation from the Prompt Builder first.",
+          },
+        ]);
+      }
+    };
+
+    initializeConversation();
+  }, []);
 
   const navigate = useNavigate();
   const [inputMessage, setInputMessage] = useState("");

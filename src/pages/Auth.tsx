@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import { Link } from "react-router-dom";
+import { apiService } from "@/services/api";
 
 /**
  * Main authentication component for SaaS MVP
@@ -29,15 +30,15 @@ const Auth = () => {
    * If token exists, user is already authenticated
    */
   useEffect(() => {
-    const storedToken = localStorage.getItem("jwt_token");
-    if (storedToken) {
-      setToken(storedToken);
+    const isAuth = apiService.isAuthenticated();
+    if (isAuth) {
+      setToken("authenticated");
     }
   }, []);
 
   /**
    * Handle user registration
-   * POSTs credentials to backend and stores JWT token on success
+   * Uses API service to register user and store JWT token
    */
   const handleRegister = async () => {
     // Basic validation
@@ -46,36 +47,19 @@ const Auth = () => {
       return;
     }
 
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
-
-      // Store JWT token in localStorage
-      if (data.token) {
-        localStorage.setItem("jwt_token", data.token);
-        setToken(data.token);
-        toast.success("Registration successful!");
-        setEmail("");
-        setPassword("");
-      }
+      await apiService.register(email, password);
+      setToken("authenticated");
+      toast.success("Registration successful!");
+      setEmail("");
+      setPassword("");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Registration failed",
@@ -88,7 +72,7 @@ const Auth = () => {
 
   /**
    * Handle user login
-   * POSTs credentials to backend and stores JWT token on success
+   * Uses API service to login user and store JWT token
    */
   const handleLogin = async () => {
     // Basic validation
@@ -100,28 +84,11 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      // Store JWT token in localStorage
-      if (data.token) {
-        localStorage.setItem("jwt_token", data.token);
-        setToken(data.token);
-        toast.success("Login successful!");
-        setEmail("");
-        setPassword("");
-      }
+      await apiService.login(email, password);
+      setToken("authenticated");
+      toast.success("Login successful!");
+      setEmail("");
+      setPassword("");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Login failed");
       console.error("Login error:", error);
@@ -132,10 +99,10 @@ const Auth = () => {
 
   /**
    * Handle user logout
-   * Clears token from localStorage and state
+   * Uses API service to logout user
    */
   const handleLogout = () => {
-    localStorage.removeItem("jwt_token");
+    apiService.logout();
     setToken(null);
     toast.success("Logged out successfully");
   };
