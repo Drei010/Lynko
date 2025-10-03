@@ -1,10 +1,61 @@
+
 /**
  * Chatbot Controller
- * Handles chatbot message processing without authentication
+ * Handles chatbot message processing with OpenAI integration
  */
 
-// AI Response Generator
-const generateAIResponse = (userMessage, config = {}) => {
+const axios = require('axios');
+
+// AI Response Generator using OpenAI API
+const generateAIResponse = async (userMessage, config = {}) => {
+  const { product = 'our product', goal = 'book a demo', goalLink = '', fallback = 'visit our website', fallbackLink = '' } = config;
+  
+  // Check if OpenAI API key is configured
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+  
+  if (!openaiApiKey) {
+    // Fallback to rule-based responses if no API key
+    return generateFallbackResponse(userMessage, config);
+  }
+
+  try {
+    // Create system prompt with context
+    const systemPrompt = `You are a helpful AI sales assistant for ${product}. Your main goal is to help users ${goal}. 
+If users are interested, direct them to: ${goalLink || 'schedule a meeting'}.
+If users are not interested, suggest they ${fallback} at: ${fallbackLink || 'our website'}.
+Be conversational, helpful, and focus on qualifying prospects and booking meetings.
+Keep responses concise and natural.`;
+
+    // Call OpenAI API
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: 'gpt-3.5-turbo',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage }
+        ],
+        max_tokens: 150,
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${openaiApiKey}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data.choices[0].message.content;
+  } catch (error) {
+    console.error('OpenAI API Error:', error.response?.data || error.message);
+    // Fallback to rule-based response on error
+    return generateFallbackResponse(userMessage, config);
+  }
+};
+
+// Fallback response generator (rule-based)
+const generateFallbackResponse = (userMessage, config = {}) => {
   const { product = 'our product', goal = 'book a demo', goalLink = '', fallback = 'visit our website', fallbackLink = '' } = config;
   const lowerMessage = userMessage.toLowerCase();
   
@@ -85,10 +136,7 @@ const chat = async (req, res) => {
     }
 
     // Generate AI response
-    const aiResponse = generateAIResponse(message, config);
-
-    // Simulate processing delay for realistic experience
-    await new Promise(resolve => setTimeout(resolve, 300));
+    const aiResponse = await generateAIResponse(message, config);
 
     res.json({
       success: true,
@@ -114,6 +162,7 @@ const healthCheck = (req, res) => {
   res.json({
     success: true,
     message: 'Chatbot service is running',
+    openai_configured: !!process.env.OPENAI_API_KEY,
     timestamp: new Date().toISOString(),
   });
 };

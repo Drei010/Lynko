@@ -65,7 +65,7 @@ const ChatbotTest = () => {
     return `Based on your message about "${userMessage}", I understand you're interested in learning more about ${product}. I can help you ${goal}, or if you prefer, you can ${fallback} at ${fallbackLink}. What would work best for you?`;
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (inputMessage.trim() === "" || isLoading) return;
 
     const newUserMessage = {
@@ -75,20 +75,55 @@ const ChatbotTest = () => {
     };
 
     setMessages([...messages, newUserMessage]);
+    const messageToSend = inputMessage;
     setInputMessage("");
     setIsLoading(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
+    try {
+      // Call backend API
+      const response = await fetch('/api/chatbot/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: messageToSend,
+          config: {
+            product,
+            goal,
+            goalLink,
+            fallback,
+            fallbackLink,
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        const aiResponse = {
+          id: messages.length + 2,
+          role: "assistant" as const,
+          content: data.data.aiResponse,
+        };
+        
+        setMessages(prev => [...prev, aiResponse]);
+      } else {
+        throw new Error(data.message || 'Failed to get response');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // Fallback to local response on error
       const aiResponse = {
         id: messages.length + 2,
         role: "assistant" as const,
-        content: generateAIResponse(inputMessage),
+        content: generateAIResponse(messageToSend),
       };
       
       setMessages(prev => [...prev, aiResponse]);
+    } finally {
       setIsLoading(false);
-    }, 800);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
