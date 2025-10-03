@@ -37,9 +37,13 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS configuration
+// CORS configuration - allow extension and web app
 app.use(cors({
-  origin: config.cors.origin,
+  origin: [
+    config.cors.origin,
+    'chrome-extension://*',
+    'moz-extension://*'
+  ],
   credentials: true,
 }));
 
