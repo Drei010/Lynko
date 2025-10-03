@@ -30,25 +30,18 @@ const Navigation = () => {
               Prompt Builder
             </Link>
             <Link
-              to="/chatbot-test"
+              to="/chatbot"
               className="text-white/90 hover:text-white transition-colors"
-              data-testid="link-chatbot-test"
+              data-testid="link-chatbot"
             >
-              Pricing
-            </Link>
-            <Link
-              to="#"
-              className="text-white/90 hover:text-white transition-colors"
-              data-testid="link-resources"
-            >
-              Resources
+              Chatbot
             </Link>
           </div>
 
-          {/* Sign up button */}
-          <Link to="/auth">
+          {/* Chatbot button */}
+          <Link to="/chatbot">
             <Button className="bg-white text-foreground hover:bg-white/90">
-              Sign up
+              Try Chatbot
             </Button>
           </Link>
         </div>
