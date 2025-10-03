@@ -17,6 +17,7 @@ const { testConnection } = require('./config/database');
 const authRoutes = require('./routes/auth');
 const conversationRoutes = require('./routes/conversations');
 const messageRoutes = require('./routes/messages');
+const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
+app.use('/api/chatbot', chatbotRoutes);  // Chatbot routes (no auth required)
 app.use('/api/auth', authRoutes);
 app.use('/api/conversations', conversationRoutes);
 app.use('/api/conversations', messageRoutes);
@@ -109,18 +111,17 @@ const startServer = async () => {
     
     // Start the server
     const server = app.listen(config.port, () => {
-      console.log('🚀 Lynko Backend Server Started');
+      console.log('🚀 Lynko Chatbot Backend Started');
       console.log(`📍 Environment: ${config.nodeEnv}`);
       console.log(`🌐 Server running on port ${config.port}`);
       console.log(`🔗 Health check: http://localhost:${config.port}/health`);
-      console.log(`📚 API Documentation:`);
+      console.log(`🤖 Chatbot API:`);
+      console.log(`   POST /api/chatbot/chat - Send message to chatbot (no auth)`);
+      console.log(`   GET  /api/chatbot/health - Chatbot health check`);
+      console.log(`📚 Additional API (auth required):`);
       console.log(`   POST /api/auth/register - Register new user`);
       console.log(`   POST /api/auth/login - Login user`);
-      console.log(`   GET  /api/auth/profile - Get user profile`);
       console.log(`   POST /api/conversations - Create conversation`);
-      console.log(`   GET  /api/conversations - Get user conversations`);
-      console.log(`   POST /api/conversations/:id/messages - Send message`);
-      console.log(`   GET  /api/conversations/:id/messages - Get messages`);
     });
 
     // Handle server errors
