@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -11,71 +11,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { apiService } from "@/services/api";
-import { toast } from "sonner";
 
 const ChatbotTest = () => {
   const [messages, setMessages] = useState<
     Array<{ id: number; role: "user" | "assistant"; content: string }>
-  >([]);
+  >([
+    {
+      id: 1,
+      role: "assistant",
+      content:
+        "Hi! I'm your AI assistant. I can help you with LinkedIn conversations, prospect qualification, and meeting booking. How can I help you today?",
+    },
+  ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [conversationId, setConversationId] = useState<number | null>(null);
-
-  // Initialize conversation and load messages
-  useEffect(() => {
-    const initializeConversation = async () => {
-      const storedConversationId = localStorage.getItem("lynko_conversation_id");
-      const storedFirstMessage = localStorage.getItem("lynko_first_message");
-
-      if (storedConversationId && storedFirstMessage) {
-        setConversationId(parseInt(storedConversationId));
-
-        // Send the first message to start the conversation
-        try {
-          setIsLoading(true);
-          const response = await apiService.sendMessage(
-            parseInt(storedConversationId),
-            storedFirstMessage
-          );
-
-          setMessages([
-            {
-              id: response.user_message.id,
-              role: response.user_message.role,
-              content: response.user_message.content,
-            },
-            {
-              id: response.ai_message.id,
-              role: response.ai_message.role,
-              content: response.ai_message.content,
-            },
-          ]);
-
-          // Clear stored data
-          localStorage.removeItem("lynko_first_message");
-          localStorage.removeItem("lynko_conversation_id");
-        } catch (error) {
-          console.error("Error sending first message:", error);
-          toast.error("Failed to start conversation");
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        // Fallback to default messages if no conversation setup
-        setMessages([
-          {
-            id: 1,
-            role: "assistant",
-            content:
-              "Hi! I'm ready to help you test your AI conversation. Please set up a conversation from the Prompt Builder first.",
-          },
-        ]);
-      }
-    };
-
-    initializeConversation();
-  }, []);
 
   const navigate = useNavigate();
   const [product, setProduct] = useState("Kakiyo");
@@ -84,17 +33,62 @@ const ChatbotTest = () => {
   const [fallback, setFallback] = useState("visit website");
   const [fallbackLink, setFallbackLink] = useState("https://kakiyo.com");
 
-  const handleSendMessage = () => {
-    if (inputMessage.trim() === "") return;
+  // Mock AI response generator
+  const generateAIResponse = (userMessage: string): string => {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    if (lowerMessage.includes("hello") || lowerMessage.includes("hi")) {
+      return "Hello! Nice to meet you. I'm here to help you with LinkedIn automation and prospect qualification. What would you like to know?";
+    }
+    
+    if (lowerMessage.includes("demo") || lowerMessage.includes("meeting")) {
+      return `Great! I'd be happy to help you book a demo. Based on your configuration, I can schedule a ${goal} at ${goalLink}. Would you like to proceed?`;
+    }
+    
+    if (lowerMessage.includes("product") || lowerMessage.includes("tell me about")) {
+      return `I can tell you about ${product}. It's a powerful platform designed to help SDRs automate personalized LinkedIn conversations at scale. Would you like to know more about specific features?`;
+    }
+    
+    if (lowerMessage.includes("how") || lowerMessage.includes("work")) {
+      return "I work by autonomously handling entire personalized LinkedIn conversations. I can qualify prospects based on their responses, understand their needs, and either book meetings with interested prospects or direct them to alternative resources. I maintain a human-like, personalized touch throughout the conversation.";
+    }
+    
+    if (lowerMessage.includes("price") || lowerMessage.includes("cost")) {
+      return "For detailed pricing information, I can direct you to our website or schedule a call with our sales team to discuss a plan that fits your needs. Which would you prefer?";
+    }
+    
+    if (lowerMessage.includes("bye") || lowerMessage.includes("goodbye")) {
+      return "Thank you for chatting with me! If you have any more questions, feel free to reach out. Have a great day!";
+    }
+    
+    // Default response
+    return `Based on your message about "${userMessage}", I understand you're interested in learning more about ${product}. I can help you ${goal}, or if you prefer, you can ${fallback} at ${fallbackLink}. What would work best for you?`;
+  };
 
-    const newMessage = {
+  const handleSendMessage = () => {
+    if (inputMessage.trim() === "" || isLoading) return;
+
+    const newUserMessage = {
       id: messages.length + 1,
       role: "user" as const,
       content: inputMessage,
     };
 
-    setMessages([...messages, newMessage]);
+    setMessages([...messages, newUserMessage]);
     setInputMessage("");
+    setIsLoading(true);
+
+    // Simulate AI response delay
+    setTimeout(() => {
+      const aiResponse = {
+        id: messages.length + 2,
+        role: "assistant" as const,
+        content: generateAIResponse(inputMessage),
+      };
+      
+      setMessages(prev => [...prev, aiResponse]);
+      setIsLoading(false);
+    }, 800);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -104,7 +98,14 @@ const ChatbotTest = () => {
   };
 
   const handleNewTest = () => {
-    setMessages([]);
+    setMessages([
+      {
+        id: 1,
+        role: "assistant",
+        content:
+          "Hi! I'm your AI assistant. I can help you with LinkedIn conversations, prospect qualification, and meeting booking. How can I help you today?",
+      },
+    ]);
     setInputMessage("");
   };
 
@@ -174,6 +175,14 @@ const ChatbotTest = () => {
                       </p>
                     </div>
                   ))}
+                  {isLoading && (
+                    <div className="p-4 rounded-lg bg-[#1a1a1a] border border-gray-800">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs text-gray-400">AI Assistant</span>
+                      </div>
+                      <p className="text-sm text-gray-200">Typing...</p>
+                    </div>
+                  )}
                 </div>
               </ScrollArea>
 
@@ -186,11 +195,13 @@ const ChatbotTest = () => {
                   placeholder="Type your message..."
                   className="bg-[#1a1a1a] border-gray-700 text-white flex-1"
                   data-testid="input-chat-message"
+                  disabled={isLoading}
                 />
                 <Button
                   onClick={handleSendMessage}
                   className="bg-white text-black hover:bg-gray-200 px-6"
                   data-testid="button-send-message"
+                  disabled={isLoading}
                 >
                   Send
                 </Button>
@@ -300,13 +311,10 @@ const ChatbotTest = () => {
                     data-testid="input-fallback-link"
                   />
                 </div>
-                {/* Test Prompt Button */}
-                <Button
-                  className="w-full bg-white text-black hover:bg-gray-200"
-                  data-testid="button-test-prompt"
-                >
-                  Test Prompt
-                </Button>
+                {/* Info about configuration */}
+                <div className="text-xs text-gray-400 p-3 bg-[#1a1a1a] border border-gray-800 rounded">
+                  These settings customize how the AI assistant responds in conversations
+                </div>
               </div>
             </div>
           </div>
