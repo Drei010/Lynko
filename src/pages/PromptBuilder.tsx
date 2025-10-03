@@ -9,9 +9,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Navigation from "@/components/Navigation";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { apiService } from "@/services/api";
+import { toast } from "sonner";
 
 const PromptBuilder = () => {
+  const navigate = useNavigate();
+  
   const [context, setContext] = useState(`# Role
 You are {{agentName}}, a representative of {{companyName}}, reaching out to prospects on LinkedIn.
 
@@ -35,6 +39,45 @@ Your mission is to engage in personalized conversations that lead to one of two 
 12. For company names in CAPS: capitalize first letter only`);
 
   const [firstMessage, setFirstMessage] = useState("");
+  const [aiModel, setAiModel] = useState("gpt-3.5-turbo");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleTestPrompt = async () => {
+    if (!firstMessage.trim()) {
+      toast.error("Please enter a first message");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Check if user is authenticated
+      if (!apiService.isAuthenticated()) {
+        toast.error("Please login first");
+        navigate('/auth');
+        return;
+      }
+
+      // Create a new conversation in the backend
+      const conversationData = await apiService.createConversation(
+        "Test Conversation",
+        context,
+        aiModel
+      );
+
+      // Store the first message and conversation ID for the ChatbotTest page
+      localStorage.setItem('lynko_first_message', firstMessage.trim());
+      localStorage.setItem('lynko_conversation_id', conversationData.conversation.id.toString());
+
+      navigate('/chatbot-test');
+      toast.success("Conversation created successfully!");
+    } catch (error) {
+      console.error("Error creating conversation:", error);
+      toast.error("Failed to create conversation. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -90,7 +133,7 @@ Your mission is to engage in personalized conversations that lead to one of two 
                 >
                   Models
                 </label>
-                <Select defaultValue="gpt-4o-mini">
+                <Select value={aiModel} onValueChange={setAiModel}>
                   <SelectTrigger
                     className="bg-[#1a1a1a] border-gray-700 text-white"
                     data-testid="select-model"
@@ -98,34 +141,34 @@ Your mission is to engage in personalized conversations that lead to one of two 
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="gpt-4o-mini" data-testid="select-item-gpt-4o-mini">
-                      GPT-4o Mini
-                    </SelectItem>
                     <SelectItem value="gpt-3.5-turbo" data-testid="select-item-gpt-3.5">
                       GPT-3.5 Turbo
                     </SelectItem>
-                    <SelectItem value="llama-3.2" data-testid="select-item-llama">
-                      Llama 3.2
+                    <SelectItem value="gpt-4" data-testid="select-item-gpt-4">
+                      GPT-4
                     </SelectItem>
-                    <SelectItem value="gemini-flash" data-testid="select-item-gemini">
-                      Gemini Flash
+                    <SelectItem value="claude-instant-1" data-testid="select-item-claude-instant">
+                      Claude Instant-1
                     </SelectItem>
-                    <SelectItem value="claude-haiku" data-testid="select-item-claude">
-                      Claude Haiku
+                    <SelectItem value="claude-2" data-testid="select-item-claude-2">
+                      Claude-2
+                    </SelectItem>
+                    <SelectItem value="gemini-pro" data-testid="select-item-gemini">
+                      Gemini Pro
                     </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Test Prompt Button */}
-              <Link to="/chatbot-test" data-testid="link-test-prompt">
-                <Button
-                  className="w-full bg-white text-black hover:bg-gray-200"
-                  data-testid="button-test-prompt"
-                >
-                  Test Prompt
-                </Button>
-              </Link>
+              <Button
+                onClick={handleTestPrompt}
+                disabled={isLoading}
+                className="w-full bg-white text-black hover:bg-gray-200"
+                data-testid="button-test-prompt"
+              >
+                {isLoading ? "Creating..." : "Test Prompt"}
+              </Button>
             </div>
           </div>
         </div>
