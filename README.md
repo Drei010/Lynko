@@ -1,4 +1,3 @@
-
 # Lynko - AI-Powered LinkedIn Conversation Automation
 
 [![React](https://img.shields.io/badge/React-18.3.1-blue.svg)](https://reactjs.org/)
@@ -95,7 +94,7 @@ bash start.sh
    ```bash
    # Frontend dependencies
    npm install
-   
+
    # Backend dependencies
    cd backend && npm install && cd ..
    ```
@@ -104,7 +103,7 @@ bash start.sh
    ```bash
    # Copy environment template
    cp backend/env.example backend/.env
-   
+
    # Edit backend/.env with your settings if needed
    ```
 
@@ -112,7 +111,7 @@ bash start.sh
    ```bash
    # Create database
    createdb lynko_db
-   
+
    # Run migrations
    cd backend && npm run migrate && cd ..
    ```
@@ -121,43 +120,42 @@ bash start.sh
    ```bash
    # Start backend (in one terminal)
    cd backend && npm start
-   
+
    # Start frontend (in another terminal)
    npm run dev
    ```
 
 ## 🤖 OpenAI Integration (Optional)
 
-To use real ChatGPT responses instead of rule-based responses:
-
 ### Getting Your OpenAI API Key
 
-1. Sign up at [https://platform.openai.com/signup](https://platform.openai.com/signup)
-2. Go to [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-3. Create a new secret key and copy it
+1. **Sign up for OpenAI**: Go to [https://platform.openai.com/signup](https://platform.openai.com/signup)
+2. **Navigate to API Keys**: Once logged in, go to [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+3. **Create New Key**: Click "Create new secret key" and copy the key (you won't be able to see it again!)
 
-### Configure in Replit
+### Configure Your Environment
 
-1. Open the Secrets tool in Replit (lock icon in sidebar)
-2. Add a new secret:
-   - Key: `OPENAI_API_KEY`
-   - Value: Your OpenAI API key
-3. Restart the application
+1. **Add to Replit Secrets**: 
+   - Open the Secrets tool in Replit (lock icon in the sidebar)
+   - Add a new secret with key: `OPENAI_API_KEY`
+   - Paste your OpenAI API key as the value
+2. **Restart the application** using `bash start.sh`
 
-### Configure Locally
-
-1. Edit `backend/.env` file
-2. Add: `OPENAI_API_KEY=sk-your-key-here`
-3. Restart the backend
-
-### Pricing
+### Pricing & Free Tier
 
 - OpenAI offers **$5 in free credits** for new accounts
 - GPT-3.5-turbo costs approximately **$0.002 per 1,000 tokens**
 - Each conversation typically uses 100-300 tokens
 - Your $5 credit = ~2,500 conversations
 
-**Note**: Without OpenAI configured, the chatbot uses intelligent rule-based responses, so your app will always work!
+### Testing
+
+After adding your API key:
+1. Restart the backend workflow
+2. Visit `/api/chatbot/health` to verify OpenAI is configured
+3. Test the chatbot - it should now use real ChatGPT responses!
+
+Without OpenAI, the chatbot uses intelligent rule-based responses.
 
 ## 📁 Project Structure
 
@@ -204,7 +202,11 @@ Lynko/
 └── package.json           # Dependencies and scripts
 ```
 
-## 📚 API Endpoints
+## 📚 Documentation
+
+All documentation is consolidated in this README file for easy reference.
+
+## 🚀 API Endpoints
 
 ### Chatbot Routes (No Auth Required)
 
