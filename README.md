@@ -42,32 +42,202 @@ Lynko is a cutting-edge SaaS platform that empowers Sales Development Representa
 - **PostCSS** with Autoprefixer
 - **TypeScript** for type checking
 
-## 📦 Installation
+## 📦 Installation & Local Setup
 
 ### Prerequisites
 - Node.js (v16 or higher)
 - npm or yarn package manager
+- PostgreSQL (v12 or higher)
+- Git
 
-### Setup Instructions
+### Complete Local Setup Guide
 
-1. **Clone the repository**
+#### Step 1: Clone the Repository
+```bash
+git clone https://github.com/Drei010/Lynko.git
+cd Lynko
+```
+
+#### Step 2: Database Setup
+1. **Install PostgreSQL** (if not already installed):
    ```bash
-   git clone https://github.com/Drei010/Lynko.git
-   cd Lynko
+   # Ubuntu/Debian
+   sudo apt update && sudo apt install -y postgresql postgresql-contrib
+   
+   # macOS (using Homebrew)
+   brew install postgresql
+   
+   # Start PostgreSQL service
+   sudo systemctl start postgresql  # Linux
+   brew services start postgresql   # macOS
    ```
 
-2. **Install dependencies**
+2. **Create Database and User**:
+   ```bash
+   # Access PostgreSQL as postgres user
+   sudo -u postgres psql
+   
+   # Create database
+   CREATE DATABASE lynko_db;
+   
+   # Create user with password
+   CREATE USER lynko_user WITH ENCRYPTED PASSWORD 'lynko_password123';
+   
+   # Grant privileges
+   GRANT ALL PRIVILEGES ON DATABASE lynko_db TO lynko_user;
+   
+   # Exit PostgreSQL
+   \q
+   ```
+
+#### Step 3: Backend Setup
+1. **Navigate to backend directory**:
+   ```bash
+   cd backend
+   ```
+
+2. **Install backend dependencies**:
    ```bash
    npm install
    ```
 
-3. **Start the development server**
+3. **Create environment file**:
+   ```bash
+   cp env.example .env
+   ```
+
+4. **Configure environment variables** (edit `.env` file):
+   ```env
+   # Database Configuration
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=lynko_db
+   DB_USER=lynko_user
+   DB_PASSWORD=lynko_password123
+   DATABASE_URL=postgresql://lynko_user:lynko_password123@localhost:5432/lynko_db
+   
+   # JWT Configuration
+   JWT_SECRET=your_super_secret_jwt_key_here_make_it_very_long_and_secure
+   JWT_EXPIRES_IN=7d
+   
+   # Server Configuration
+   PORT=5000
+   NODE_ENV=development
+   
+   # CORS Configuration
+   CORS_ORIGIN=http://localhost:3000
+   ```
+
+5. **Start the backend server**:
+   ```bash
+   npm run dev
+   ```
+   
+   You should see:
+   ```
+   ✅ Database connected successfully
+   🚀 Lynko Backend Server Started
+   🌐 Server running on port 5000
+   ```
+
+#### Step 4: Frontend Setup
+1. **Open a new terminal** and navigate to the root directory:
+   ```bash
+   cd Lynko  # (from project root)
+   ```
+
+2. **Install frontend dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Start the frontend development server**:
+   ```bash
+   npm run dev
+   ```
+   
+   You should see:
+   ```
+   VITE v5.4.19  ready in 434ms
+   ➜  Local:   http://localhost:3000/
+   ➜  Network: http://10.0.0.98:3000/
+   ```
+
+#### Step 5: Verify Installation
+1. **Frontend**: Open http://localhost:3000 in your browser
+2. **Backend Health Check**: Visit http://localhost:5000/health
+3. **Expected Response**:
+   ```json
+   {
+     "success": true,
+     "message": "Lynko Backend is running",
+     "timestamp": "2025-10-03T18:20:59.722Z",
+     "environment": "development"
+   }
+   ```
+
+### Running the Application
+
+#### Development Mode
+1. **Start Backend** (Terminal 1):
+   ```bash
+   cd backend
+   npm run dev
+   ```
+
+2. **Start Frontend** (Terminal 2):
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:5000` to view the application
+#### Production Mode
+1. **Build Frontend**:
+   ```bash
+   npm run build
+   ```
+
+2. **Start Backend**:
+   ```bash
+   cd backend
+   npm start
+   ```
+
+### API Endpoints
+The backend provides the following API endpoints:
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/profile` - Get user profile
+- `POST /api/conversations` - Create conversation
+- `GET /api/conversations` - Get user conversations
+- `POST /api/conversations/:id/messages` - Send message
+- `GET /api/conversations/:id/messages` - Get messages
+
+### Troubleshooting
+
+#### Common Issues
+1. **Port 5000 already in use**:
+   ```bash
+   sudo lsof -ti:5000 | xargs sudo kill -9
+   ```
+
+2. **Database connection failed**:
+   - Ensure PostgreSQL is running
+   - Verify database credentials in `.env` file
+   - Check if `lynko_db` database exists
+
+3. **Frontend can't connect to backend**:
+   - Ensure backend is running on port 5000
+   - Check CORS configuration in backend `.env`
+
+4. **Permission denied errors**:
+   ```bash
+   sudo chown -R $USER:$USER node_modules
+   ```
+
+### Application URLs
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000
+- **Health Check**: http://localhost:5000/health
 
 ## 🏗️ Build & Deployment
 
