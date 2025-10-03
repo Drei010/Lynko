@@ -12,17 +12,6 @@ interface ApiResponse<T = any> {
   errors?: any[];
 }
 
-interface User {
-  id: number;
-  email: string;
-  created_at: string;
-}
-
-interface AuthResponse {
-  user: User;
-  token: string;
-}
-
 interface Conversation {
   id: number;
   title: string;
@@ -48,11 +37,9 @@ interface ConversationMessages {
 
 class ApiService {
   private baseURL: string;
-  private token: string | null = null;
 
   constructor() {
     this.baseURL = API_BASE_URL;
-    this.token = localStorage.getItem('lynko_token');
   }
 
   private async request<T>(
@@ -64,10 +51,6 @@ class ApiService {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
-    }
 
     try {
       const response = await fetch(url, {
@@ -91,49 +74,7 @@ class ApiService {
     }
   }
 
-  // Authentication methods
-  async register(email: string, password: string): Promise<AuthResponse> {
-    const response = await this.request<AuthResponse>('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.success && response.data) {
-      this.token = response.data.token;
-      localStorage.setItem('lynko_token', response.data.token);
-    }
-
-    return response.data!;
-  }
-
-  async login(email: string, password: string): Promise<AuthResponse> {
-    const response = await this.request<AuthResponse>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.success && response.data) {
-      this.token = response.data.token;
-      localStorage.setItem('lynko_token', response.data.token);
-    }
-
-    return response.data!;
-  }
-
-  async getProfile(): Promise<{ user: User }> {
-    const response = await this.request<{ user: User }>('/auth/profile');
-    return response.data!;
-  }
-
-  logout(): void {
-    this.token = null;
-    localStorage.removeItem('lynko_token');
-    localStorage.removeItem('lynko_first_message');
-  }
-
-  isAuthenticated(): boolean {
-    return !!this.token;
-  }
+  
 
   // Conversation methods
   async createConversation(title: string, context: string, aiModel: string): Promise<{ conversation: Conversation }> {
