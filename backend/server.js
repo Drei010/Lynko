@@ -14,9 +14,6 @@ const config = require('./config');
 const { testConnection } = require('./config/database');
 
 // Import routes
-const authRoutes = require('./routes/auth');
-const conversationRoutes = require('./routes/conversations');
-const messageRoutes = require('./routes/messages');
 const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
@@ -73,9 +70,6 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/chatbot', chatbotRoutes);  // Chatbot routes (no auth required)
-app.use('/api/auth', authRoutes);
-app.use('/api/conversations', conversationRoutes);
-app.use('/api/conversations', messageRoutes);
 
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
@@ -129,12 +123,8 @@ const startServer = async () => {
       console.log(`🌐 Server running on port ${config.port}`);
       console.log(`🔗 Health check: http://localhost:${config.port}/health`);
       console.log(`🤖 Chatbot API:`);
-      console.log(`   POST /api/chatbot/chat - Send message to chatbot (no auth)`);
+      console.log(`   POST /api/chatbot/chat - Send message to chatbot`);
       console.log(`   GET  /api/chatbot/health - Chatbot health check`);
-      console.log(`📚 Additional API (auth required - requires database):`);
-      console.log(`   POST /api/auth/register - Register new user`);
-      console.log(`   POST /api/auth/login - Login user`);
-      console.log(`   POST /api/conversations - Create conversation`);
     });
 
     // Handle server errors

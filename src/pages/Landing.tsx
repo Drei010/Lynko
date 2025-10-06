@@ -57,7 +57,7 @@ const Landing = () => {
                 </Link>
 
                 <p className="text-sm text-muted-foreground">
-                  Start instantly • No login required
+                  Start instantly • No setup required
                 </p>
               </div>
             </div>

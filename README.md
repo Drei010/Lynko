@@ -208,38 +208,12 @@ All documentation is consolidated in this README file for easy reference.
 
 ## 🚀 API Endpoints
 
-### Chatbot Routes (No Auth Required)
+### Chatbot Routes
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | `/api/chatbot/chat` | Send message to chatbot |
 | GET | `/api/chatbot/health` | Chatbot health check |
-
-### Authentication Routes (Optional)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register a new user |
-| POST | `/api/auth/login` | Login user |
-| GET | `/api/auth/profile` | Get current user profile |
-
-### Conversation Routes (Auth Required)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/conversations` | Create a new conversation |
-| GET | `/api/conversations` | Get all user conversations |
-| GET | `/api/conversations/:id` | Get specific conversation |
-| PUT | `/api/conversations/:id` | Update conversation |
-| DELETE | `/api/conversations/:id` | Delete conversation |
-
-### Message Routes (Auth Required)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/conversations/:id/messages` | Send message and get AI response |
-| GET | `/api/conversations/:id/messages` | Get conversation messages |
-| DELETE | `/api/messages/:id` | Delete a message |
 
 ## 🔐 Environment Variables
 
