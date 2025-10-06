@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,36 +21,46 @@ interface Message {
   timestamp?: string; // Updated to string to match ISOString
 }
 
-// Mock apiService for demonstration purposes
+// API Service for chatbot communication
 const apiService = {
-  // Mock function to send chat message directly
-  sendChatMessage: async (message: string, model: string): Promise<{ reply: string }> => {
-    console.log(`Sending message: ${message} with model: ${model}`);
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+  sendChatMessage: async (message: string, model: string, systemPrompt?: string): Promise<{ reply: string }> => {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/chatbot/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message,
+          model,
+          systemPrompt
+        }),
+      });
 
-    // Mock response based on input
-    const lowerMessage = message.toLowerCase();
-    if (lowerMessage.includes("hello") || lowerMessage.includes("hi")) {
-      return { reply: "Hello there! How can I assist you today?" };
-    } else if (lowerMessage.includes("product") || lowerMessage.includes("kakiyo")) {
-      return { reply: "Kakiyo is a platform designed to help with LinkedIn automation." };
-    } else {
-      return { reply: `I received your message: "${message}". How can I help you further?` };
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return { reply: data.reply };
+    } catch (error) {
+      console.error('API call failed, using fallback response:', error);
+      // Fallback to simple response if API fails
+      return { reply: `I received your message: "${message}". The API is currently unavailable.` };
     }
-  },
-  // These functions are no longer needed but kept for context if they were part of the original apiService
-  createConversation: async (name: string, description: string, model: string) => {
-    console.log("createConversation called - should not happen in simplified version");
-    return { conversation: { id: 1, name, description, model } };
-  },
-  sendMessage: async (conversationId: number, message: string) => {
-    console.log(`sendMessage called for conversation ${conversationId} - should not happen in simplified version`);
-    return { ai_message: { id: 2, content: "Mock AI response", created_at: new Date().toISOString() } };
   }
 };
 
 const ChatbotTest = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get system prompt and model from navigation state (from Prompt Builder)
+  const initialSystemPrompt = location.state?.initialPrompt || "";
+  const initialModel = location.state?.model || "gpt-3.5-turbo";
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -63,13 +73,13 @@ const ChatbotTest = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
   const [product, setProduct] = useState("Kakiyo");
   const [goal, setGoal] = useState("Book a demo of the product");
   const [goalLink, setGoalLink] = useState("https://cal.com/kakiyo");
   const [fallback, setFallback] = useState("visit website");
   const [fallbackLink, setFallbackLink] = useState("https://kakiyo.com");
-  const [selectedModel, setSelectedModel] = useState("gpt-3.5-turbo"); // Default model
+  const [selectedModel, setSelectedModel] = useState(initialModel);
+  const [systemPrompt, setSystemPrompt] = useState(initialSystemPrompt);
 
 
   // Mock AI response generator - this is now a fallback if API fails
@@ -121,8 +131,23 @@ const ChatbotTest = () => {
     setMessages(prev => [...prev, newUserMessage]);
 
     try {
-      // Send message directly to chatbot API
-      const result = await apiService.sendChatMessage(userMessageContent, selectedModel);
+      // Replace template variables in system prompt if provided
+      let processedSystemPrompt = systemPrompt;
+      if (systemPrompt) {
+        processedSystemPrompt = systemPrompt
+          .replace(/{{agentName}}/g, "AI Assistant")
+          .replace(/{{companyName}}/g, product)
+          .replace(/{{goalLink}}/g, goal)
+          .replace(/{{calendlyLINK}}/g, goalLink)
+          .replace(/{{fallbackLINK}}/g, fallbackLink);
+      }
+      
+      // Send message directly to chatbot API with system prompt
+      const result = await apiService.sendChatMessage(
+        userMessageContent, 
+        selectedModel, 
+        processedSystemPrompt
+      );
 
       const aiMessage: Message = {
         id: Date.now() + 1, // Ensure unique ID

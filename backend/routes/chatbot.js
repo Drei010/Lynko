@@ -5,12 +5,12 @@
 
 const express = require('express');
 const router = express.Router();
-const { chat, healthCheck } = require('../controllers/chatbotController');
+const chatbotController = require('../controllers/chatbotController');
 
-// POST /api/chatbot/chat - Send message and get AI response
-router.post('/chat', chat);
+// Chat endpoint for direct message processing
+router.post('/chat', chatbotController.chat);
 
 // GET /api/chatbot/health - Health check
-router.get('/health', healthCheck);
+router.get('/health', chatbotController.healthCheck);
 
 module.exports = router;

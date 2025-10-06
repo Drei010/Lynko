@@ -7,6 +7,90 @@
 const axios = require('axios');
 
 // AI Response Generator using OpenAI API
+const generateAIResponse = async (userMessage, model = 'gpt-3.5-turbo', systemPrompt = null) => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  
+  if (!apiKey) {
+    console.log('OpenAI API key not configured, using fallback response');
+    return `I received your message: "${userMessage}". Please configure OpenAI API key for intelligent responses.`;
+  }
+
+  try {
+    // Build messages array with system prompt if provided
+    const messages = [];
+    
+    if (systemPrompt) {
+      messages.push({
+        role: 'system',
+        content: systemPrompt
+      });
+    } else {
+      // Default system prompt
+      messages.push({
+        role: 'system',
+        content: 'You are a helpful AI assistant for LinkedIn conversations and prospect qualification.'
+      });
+    }
+    
+    messages.push({
+      role: 'user',
+      content: userMessage
+    });
+
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: model,
+        messages: messages,
+        max_tokens: 150,
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data.choices[0].message.content;
+  } catch (error) {
+    console.error('OpenAI API error:', error.response?.data || error.message);
+    throw new Error('Failed to generate AI response');
+  }
+};
+
+// Chat endpoint
+const chat = async (req, res) => {
+  try {
+    const { message, model, systemPrompt } = req.body;
+
+    if (!message) {
+      return res.status(400).json({
+        success: false,
+        message: 'Message is required'
+      });
+    }
+
+    const reply = await generateAIResponse(message, model, systemPrompt);
+
+    res.json({
+      success: true,
+      reply: reply
+    });
+  } catch (error) {
+    console.error('Chat error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to process chat message',
+      error: error.message
+    });
+  }
+};
+
+module.exports = {
+  chat
+};
 const generateAIResponse = async (userMessage, config = {}) => {
   const { product = 'our product', goal = 'book a demo', goalLink = '', fallback = 'visit our website', fallbackLink = '' } = config;
   
