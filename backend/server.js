@@ -21,6 +21,9 @@ const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
 
+// Trust proxy - required for Replit and rate limiting
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 

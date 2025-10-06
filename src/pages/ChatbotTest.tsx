@@ -12,10 +12,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// Define the Message type for clarity and type safety
+interface Message {
+  id: number;
+  role: "user" | "assistant";
+  content: string;
+  timestamp?: Date; // Optional timestamp
+}
+
 const ChatbotTest = () => {
-  const [messages, setMessages] = useState<
-    Array<{ id: number; role: "user" | "assistant"; content: string }>
-  >([
+  const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
       role: "assistant",
@@ -36,59 +42,59 @@ const ChatbotTest = () => {
   // Mock AI response generator
   const generateAIResponse = (userMessage: string): string => {
     const lowerMessage = userMessage.toLowerCase();
-    
+
     if (lowerMessage.includes("hello") || lowerMessage.includes("hi")) {
       return "Hello! Nice to meet you. I'm here to help you with LinkedIn automation and prospect qualification. What would you like to know?";
     }
-    
+
     if (lowerMessage.includes("demo") || lowerMessage.includes("meeting")) {
       return `Great! I'd be happy to help you book a demo. Based on your configuration, I can schedule a ${goal} at ${goalLink}. Would you like to proceed?`;
     }
-    
+
     if (lowerMessage.includes("product") || lowerMessage.includes("tell me about")) {
       return `I can tell you about ${product}. It's a powerful platform designed to help SDRs automate personalized LinkedIn conversations at scale. Would you like to know more about specific features?`;
     }
-    
+
     if (lowerMessage.includes("how") || lowerMessage.includes("work")) {
       return "I work by autonomously handling entire personalized LinkedIn conversations. I can qualify prospects based on their responses, understand their needs, and either book meetings with interested prospects or direct them to alternative resources. I maintain a human-like, personalized touch throughout the conversation.";
     }
-    
+
     if (lowerMessage.includes("price") || lowerMessage.includes("cost")) {
       return "For detailed pricing information, I can direct you to our website or schedule a call with our sales team to discuss a plan that fits your needs. Which would you prefer?";
     }
-    
+
     if (lowerMessage.includes("bye") || lowerMessage.includes("goodbye")) {
       return "Thank you for chatting with me! If you have any more questions, feel free to reach out. Have a great day!";
     }
-    
+
     // Default response
     return `Based on your message about "${userMessage}", I understand you're interested in learning more about ${product}. I can help you ${goal}, or if you prefer, you can ${fallback} at ${fallbackLink}. What would work best for you?`;
   };
 
   const handleSendMessage = async () => {
-    if (inputMessage.trim() === "" || isLoading) return;
+    if (!inputMessage.trim() || isLoading) return;
 
-    const newUserMessage = {
-      id: messages.length + 1,
-      role: "user" as const,
+    const userMessage: Message = {
+      id: Date.now(),
+      role: "user",
       content: inputMessage,
+      timestamp: new Date(),
     };
 
-    setMessages([...messages, newUserMessage]);
-    const messageToSend = inputMessage;
+    setMessages((prev) => [...prev, userMessage]);
     setInputMessage("");
     setIsLoading(true);
 
     try {
-      // Call backend API
+      // Use relative URL to work with Replit's proxy
       const response = await fetch('/api/chatbot/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: messageToSend,
-          config: {
+          message: inputMessage,
+          config: { // Include config in the payload
             product,
             goal,
             goalLink,
@@ -98,28 +104,35 @@ const ChatbotTest = () => {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error('Failed to get response');
+      }
+
       const data = await response.json();
 
       if (data.success && data.data) {
-        const aiResponse = {
-          id: messages.length + 2,
-          role: "assistant" as const,
+        const aiResponse: Message = {
+          id: Date.now() + 1, // Ensure unique ID
+          role: "assistant",
           content: data.data.aiResponse,
+          timestamp: new Date(),
         };
-        
+
         setMessages(prev => [...prev, aiResponse]);
       } else {
-        throw new Error(data.message || 'Failed to get response');
+        // Handle cases where response is not ok but no specific error message is provided
+        throw new Error(data.message || 'Failed to get response from AI');
       }
     } catch (error) {
       console.error('Error sending message:', error);
       // Fallback to local response on error
-      const aiResponse = {
-        id: messages.length + 2,
-        role: "assistant" as const,
-        content: generateAIResponse(messageToSend),
+      const aiResponse: Message = {
+        id: Date.now() + 1, // Ensure unique ID
+        role: "assistant",
+        content: generateAIResponse(inputMessage), // Use the original inputMessage here
+        timestamp: new Date(),
       };
-      
+
       setMessages(prev => [...prev, aiResponse]);
     } finally {
       setIsLoading(false);
