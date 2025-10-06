@@ -63,7 +63,7 @@ const HeroVisual = () => {
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-foreground">Lead Matching Process</p>
-              <p className="text-xs text-muted-foreground">Carla Marka matched with ICP criteria</p>
+              <p className="text-xs text-muted-foreground">Ria matched with ICP criteria</p>
               <p className="text-xs text-muted-foreground mt-1">10m ago</p>
             </div>
           </div>
@@ -76,7 +76,7 @@ const HeroVisual = () => {
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-foreground">Lead Scoring</p>
-              <p className="text-xs text-muted-foreground">Carla Marka scored 87/100</p>
+              <p className="text-xs text-muted-foreground">Andrei scored 87/100</p>
               <p className="text-xs text-muted-foreground mt-1">7m ago</p>
             </div>
           </div>
