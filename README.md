@@ -76,6 +76,8 @@ This will:
 - Node.js (v18 or higher)
 - PostgreSQL 12+ (optional - for auth features)
 - npm or yarn package manager
+- PostgreSQL (v12 or higher)
+- Git
 
 ### Option 1: Quick Start (Recommended)
 
