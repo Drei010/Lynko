@@ -44,7 +44,7 @@ const apiService = {
       }
 
       const data = await response.json();
-      return { reply: data.reply };
+      return { reply: data.data.reply };
     } catch (error) {
       console.error('API call failed, using fallback response:', error);
       // Fallback to simple response if API fails
