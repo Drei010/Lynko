@@ -14,11 +14,12 @@ const config = require('./config');
 const { testConnection } = require('./config/database');
 
 // Import routes
-const authRoutes = require('./routes/auth');
-const conversationRoutes = require('./routes/conversations');
-const messageRoutes = require('./routes/messages');
+const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
+
+// Trust proxy - required for Replit and rate limiting
+app.set('trust proxy', 1);
 
 // Security middleware
 app.use(helmet());
@@ -36,9 +37,13 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS configuration
+// CORS configuration - allow extension and web app
 app.use(cors({
-  origin: config.cors.origin,
+  origin: [
+    config.cors.origin,
+    'chrome-extension://*',
+    'moz-extension://*'
+  ],
   credentials: true,
 }));
 
@@ -64,9 +69,7 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/conversations', conversationRoutes);
-app.use('/api/conversations', messageRoutes);
+app.use('/api/chatbot', chatbotRoutes);  // Chatbot routes (no auth required)
 
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
@@ -104,23 +107,24 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 // Start server
 const startServer = async () => {
   try {
-    // Test database connection
-    await testConnection();
+    // Try database connection, but don't fail if unavailable
+    try {
+      await testConnection();
+      console.log('✅ Database connected');
+    } catch (dbError) {
+      console.log('⚠️  Database not available - chatbot will work without auth features');
+      console.log('   (This is normal if you haven\'t set up PostgreSQL)');
+    }
     
     // Start the server
-    const server = app.listen(config.port, () => {
-      console.log('🚀 Lynko Backend Server Started');
+    const server = app.listen(config.port, '0.0.0.0', () => {
+      console.log('🚀 Lynko Chatbot Backend Started');
       console.log(`📍 Environment: ${config.nodeEnv}`);
       console.log(`🌐 Server running on port ${config.port}`);
       console.log(`🔗 Health check: http://localhost:${config.port}/health`);
-      console.log(`📚 API Documentation:`);
-      console.log(`   POST /api/auth/register - Register new user`);
-      console.log(`   POST /api/auth/login - Login user`);
-      console.log(`   GET  /api/auth/profile - Get user profile`);
-      console.log(`   POST /api/conversations - Create conversation`);
-      console.log(`   GET  /api/conversations - Get user conversations`);
-      console.log(`   POST /api/conversations/:id/messages - Send message`);
-      console.log(`   GET  /api/conversations/:id/messages - Get messages`);
+      console.log(`🤖 Chatbot API:`);
+      console.log(`   POST /api/chatbot/chat - Send message to chatbot`);
+      console.log(`   GET  /api/chatbot/health - Chatbot health check`);
     });
 
     // Handle server errors

@@ -46,18 +46,18 @@ const Landing = () => {
 
               {/* CTA button */}
               <div className="space-y-3">
-                <Link to="/auth">
+                <Link to="/chatbot">
                   <Button
                     size="lg"
                     className="bg-[hsl(var(--badge-bg))] hover:bg-[hsl(var(--badge-bg))]/90 text-white px-8 py-6 text-base group"
                   >
-                    Get started now
+                    Try Chatbot Now
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
 
                 <p className="text-sm text-muted-foreground">
-                  Start instantly • Cancel anytime
+                  Start instantly • No setup required
                 </p>
               </div>
             </div>
