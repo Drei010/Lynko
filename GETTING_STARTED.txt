@@ -1,0 +1,77 @@
+╔═════════════════════════════════════════════════════════════════════════════╗
+║                    🚀 LYNKO - GETTING STARTED GUIDE 🚀                      ║
+╚═════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ⚡ QUICKEST START - JUST ONE COMMAND                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    ./start.sh
+
+That's it! Both frontend and backend will start automatically.
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📍 WHAT YOU'LL GET                                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Frontend  → http://localhost:3000
+    Backend   → http://localhost:5000
+    API       → http://localhost:5000/api
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🔧 BEFORE FIRST RUN                                                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    1. Install Node.js 18+ from https://nodejs.org/
+    
+    2. Get OpenAI API key from https://platform.openai.com/api-keys
+    
+    3. Edit backend/.env and add your key:
+       OPENAI_API_KEY=sk-proj-your-actual-key-here
+
+That's it! Database is optional.
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📚 DOCUMENTATION                                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Quick Ref (2 min)    → STARTUP_GUIDE.md
+    Setup Guide (10 min) → QUICKSTART.md
+    All Commands         → ./help.sh
+    Backend Docs         → backend/README.md
+    Deploy to Prod       → PRODUCTION_DEPLOYMENT.md
+    OpenAI Setup         → backend/CHATGPT_SETUP.md
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🎮 USEFUL COMMANDS                                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    ./start.sh                      Start everything
+    ./start.sh 8000 8001            Use custom ports
+    ./help.sh                       Show all commands
+    cd backend && npm run test:openai  Test OpenAI
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🆘 TROUBLESHOOTING                                                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Port in use?           → ./start.sh 8000 8001
+    OpenAI not working?    → Add key to backend/.env
+    Dependencies error?    → rm -rf node_modules && ./start.sh
+    Backend won't start?   → Check /tmp/lynko-backend.log
+    Frontend won't load?   → Check /tmp/lynko-frontend.log
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🚀 LET'S GO!                                                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    1. Run: ./start.sh
+    2. Open: http://localhost:3000
+    3. Send a message to the chatbot
+    4. Done! ✅
+
+Questions? Read QUICKSTART.md or STARTUP_GUIDE.md
+
+═════════════════════════════════════════════════════════════════════════════════
+Status: ✅ Production Ready | Ready to use: ./start.sh
+═════════════════════════════════════════════════════════════════════════════════

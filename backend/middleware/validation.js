@@ -39,46 +39,6 @@ const validate = (schema, property = 'body') => {
  * Validation Schemas
  */
 const schemas = {
-  // User registration validation
-  register: Joi.object({
-    email: Joi.string()
-      .email()
-      .max(255)
-      .required()
-      .messages({
-        'string.email': 'Please provide a valid email address',
-        'string.max': 'Email must not exceed 255 characters',
-        'any.required': 'Email is required',
-      }),
-    password: Joi.string()
-      .min(8)
-      .max(128)
-      .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]'))
-      .required()
-      .messages({
-        'string.min': 'Password must be at least 8 characters long',
-        'string.max': 'Password must not exceed 128 characters',
-        'string.pattern.base': 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character',
-        'any.required': 'Password is required',
-      }),
-  }),
-
-  // User login validation
-  login: Joi.object({
-    email: Joi.string()
-      .email()
-      .required()
-      .messages({
-        'string.email': 'Please provide a valid email address',
-        'any.required': 'Email is required',
-      }),
-    password: Joi.string()
-      .required()
-      .messages({
-        'any.required': 'Password is required',
-      }),
-  }),
-
   // Conversation creation validation
   createConversation: Joi.object({
     title: Joi.string()

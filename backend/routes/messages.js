@@ -10,11 +10,7 @@ const {
   getMessages,
   deleteMessage,
 } = require('../controllers/messageController');
-const { authenticateToken } = require('../middleware/auth');
 const { validate, schemas } = require('../middleware/validation');
-
-// All routes require authentication
-router.use(authenticateToken);
 
 // POST /api/conversations/:id/messages - Add a message to a conversation and get AI response
 router.post('/:id/messages', validate(schemas.conversationId, 'params'), validate(schemas.createMessage), createMessage);

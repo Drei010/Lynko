@@ -10,12 +10,6 @@ const config = {
   port: process.env.PORT || 3001,
   nodeEnv: process.env.NODE_ENV || 'development',
   
-  // JWT Configuration
-  jwt: {
-    secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production',
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  },
-  
   // Database Configuration
   database: {
     host: process.env.DB_HOST || 'localhost',
@@ -44,13 +38,6 @@ const config = {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY,
   },
   
-  // Security Configuration
-  security: {
-    bcryptRounds: 12,
-    maxPasswordLength: 128,
-    minPasswordLength: 8,
-  },
-  
   // Validation Configuration
   validation: {
     maxTitleLength: 255,
@@ -62,7 +49,7 @@ const config = {
 
 // Validate required environment variables in production
 if (config.nodeEnv === 'production') {
-  const requiredEnvVars = ['JWT_SECRET', 'DATABASE_URL'];
+  const requiredEnvVars = ['DATABASE_URL'];
   const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
   
   if (missingVars.length > 0) {

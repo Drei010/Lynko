@@ -9,23 +9,27 @@ Lynko is a cutting-edge SaaS platform that empowers Sales Development Representa
 
 ## 🚀 Quick Start
 
-### Run the entire application with one command:
+### Run everything with one command:
 
 ```bash
-bash start.sh
+./start.sh
 ```
 
-This will:
-1. Install any missing dependencies
-2. Start the backend API on port 3001
-3. Start the frontend on port 5000
-4. Handle database gracefully (chatbot works without database)
+**That's it!** The script automatically:
+- ✅ Checks Node.js and npm
+- ✅ Installs dependencies (if needed)
+- ✅ Creates environment files (if needed)
+- ✅ Starts backend API (port 5000)
+- ✅ Starts frontend (port 3000)
+- ✅ Runs health checks
 
-### What you'll see:
+### Access the application:
 
-- **Frontend**: http://localhost:5000
-- **Backend API**: http://localhost:3001
-- **Chatbot**: Works immediately without login
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000
+- **API Docs**: http://localhost:5000/health
+
+**For detailed setup instructions**, see [QUICKSTART.md](./QUICKSTART.md)
 
 ## ✨ Features
 
@@ -53,11 +57,15 @@ This will:
 - **React Hook Form** with validation
 
 ### Backend
-- **Node.js 18+** with Express.js
-- **PostgreSQL** for data storage (optional - chatbot works without it)
-- **JWT Authentication** (available but not required for chatbot)
-- **bcryptjs** for password hashing
+- **Node.js 18+** with Express.js for REST API
+- **PostgreSQL** for data persistence (conversations and messages)
+- **OpenAI API** for AI-powered chat responses
+- **Axios** for HTTP requests
+- **Helmet** for security headers
+- **CORS** for cross-origin requests
+- **Express Rate Limit** for API rate limiting
 - **Joi** for request validation
+- **dotenv** for environment configuration
 
 ### UI & Styling
 - **shadcn/ui** component library built on Radix UI primitives
@@ -73,13 +81,14 @@ This will:
 ## 📦 Installation & Setup
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- PostgreSQL 12+ (optional - for auth features)
-- npm or yarn package manager
-- PostgreSQL (v12 or higher)
+- **Node.js 18+** ([Download](https://nodejs.org/))
+- **PostgreSQL 12+** ([Download](https://www.postgresql.org/))
+- **OpenAI API Key** ([Get here](https://platform.openai.com/api-keys))
 - Git
 
-### Option 1: Quick Start (Recommended)
+### ⚡ Quick Start (Recommended)
+
+The easiest way to get started:
 
 ```bash
 # Clone the repository
@@ -87,10 +96,14 @@ git clone https://github.com/Drei010/Lynko.git
 cd Lynko
 
 # Run everything with one command
-bash start.sh
+./start.sh
 ```
 
-### Option 2: Manual Setup
+Then open http://localhost:3000 in your browser. **That's it!**
+
+### Manual Setup
+
+If you prefer to set up manually:
 
 1. **Install dependencies**
    ```bash
@@ -101,50 +114,56 @@ bash start.sh
    cd backend && npm install && cd ..
    ```
 
-2. **Set up environment variables (optional)**
+2. **Set up environment**
    ```bash
-   # Copy environment template
+   # Copy backend template
    cp backend/env.example backend/.env
-
-   # Edit backend/.env with your settings if needed
    ```
 
-3. **Set up PostgreSQL database (optional)**
+3. **Configure your OpenAI API key**
    ```bash
-   # Create database
-   createdb lynko_db
+   # Edit backend/.env
+   nano backend/.env
+   ```
+   
+   Find and update:
+   ```bash
+   OPENAI_API_KEY=sk-your-actual-key-here
+   DATABASE_URL=postgresql://user:password@localhost:5432/lynko_dev
+   ```
 
-   # Run migrations
+4. **Create database** (optional - chatbot works without it)
+   ```bash
+   createdb lynko_dev
    cd backend && npm run migrate && cd ..
    ```
 
-4. **Start the servers**
+5. **Start the servers**
    ```bash
-   # Start backend (in one terminal)
+   # Terminal 1: Backend
    cd backend && npm start
 
-   # Start frontend (in another terminal)
+   # Terminal 2: Frontend
    npm run dev
    ```
 
-## 🤖 OpenAI Integration (Optional)
+## 🤖 OpenAI Integration
 
-### Getting Your OpenAI API Key
+### Setup OpenAI API
 
-1. **Sign up for OpenAI**: Go to [https://platform.openai.com/signup](https://platform.openai.com/signup)
-2. **Navigate to API Keys**: Once logged in, go to [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-3. **Create New Key**: Click "Create new secret key" and copy the key (you won't be able to see it again!)
-
-### Configure Your Environment
-
-1. **Add to Replit Secrets**: 
-   - Open the Secrets tool in Replit (lock icon in the sidebar)
-   - Add a new secret with key: `OPENAI_API_KEY`
-   - Paste your OpenAI API key as the value
-2. **Restart the application** using `bash start.sh`
+1. **Get your API key**: https://platform.openai.com/api-keys
+2. **Add to backend/.env**:
+   ```bash
+   OPENAI_API_KEY=sk-proj-your-key-here
+   OPENAI_MODEL=gpt-3.5-turbo
+   ```
+3. **Test the connection**:
+   ```bash
+   cd backend && npm run test:openai
+   ```
 
 ### Pricing & Free Tier
-
+````
 - OpenAI offers **$5 in free credits** for new accounts
 - GPT-3.5-turbo costs approximately **$0.002 per 1,000 tokens**
 - Each conversation typically uses 100-300 tokens

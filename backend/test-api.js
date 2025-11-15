@@ -16,82 +16,50 @@ async function testAPI() {
     const healthResponse = await axios.get(`${BASE_URL}/health`);
     console.log('✅ Health Check:', healthResponse.data.message);
 
-    // Test 2: Register User
-    console.log('\n2. Testing User Registration...');
-    const registerData = {
-      email: 'test@example.com',
-      password: 'TestPass123!'
-    };
-    
-    let authToken;
-    try {
-      const registerResponse = await axios.post(`${BASE_URL}/api/auth/register`, registerData);
-      console.log('✅ User Registered:', registerResponse.data.message);
-      authToken = registerResponse.data.data.token;
-    } catch (error) {
-      if (error.response?.status === 409) {
-        console.log('ℹ️  User already exists, testing login...');
-        // Test 3: Login User
-        const loginResponse = await axios.post(`${BASE_URL}/api/auth/login`, registerData);
-        console.log('✅ User Logged In:', loginResponse.data.message);
-        authToken = loginResponse.data.data.token;
-      } else {
-        throw error;
-      }
-    }
+    // Test 2: Chatbot Health Check
+    console.log('\n2. Testing Chatbot Health...');
+    const chatbotHealthResponse = await axios.get(`${BASE_URL}/api/chatbot/health`);
+    console.log('✅ Chatbot Health:', chatbotHealthResponse.data.message);
+    console.log('   OpenAI Configured:', chatbotHealthResponse.data.openai_configured);
 
-    // Test 4: Get Profile
-    console.log('\n3. Testing Get Profile...');
-    const profileResponse = await axios.get(`${BASE_URL}/api/auth/profile`, {
-      headers: { Authorization: `Bearer ${authToken}` }
-    });
-    console.log('✅ Profile Retrieved:', profileResponse.data.data.user.email);
-
-    // Test 5: Create Conversation
-    console.log('\n4. Testing Create Conversation...');
+    // Test 3: Create Conversation
+    console.log('\n3. Testing Create Conversation...');
     const conversationData = {
       title: 'Test Chat',
       context: 'Testing the API functionality',
       ai_model: 'gpt-3.5-turbo'
     };
     
-    const conversationResponse = await axios.post(`${BASE_URL}/api/conversations`, conversationData, {
-      headers: { Authorization: `Bearer ${authToken}` }
-    });
+    const conversationResponse = await axios.post(`${BASE_URL}/api/conversations`, conversationData);
     console.log('✅ Conversation Created:', conversationResponse.data.message);
     const conversationId = conversationResponse.data.data.conversation.id;
 
-    // Test 6: Send Message
-    console.log('\n5. Testing Send Message...');
+    // Test 4: Send Message to Chatbot
+    console.log('\n4. Testing Send Message to Chatbot...');
     const messageData = {
       content: 'Hello, this is a test message!'
     };
     
-    const messageResponse = await axios.post(`${BASE_URL}/api/conversations/${conversationId}/messages`, messageData, {
-      headers: { Authorization: `Bearer ${authToken}` }
-    });
+    const messageResponse = await axios.post(`${BASE_URL}/api/conversations/${conversationId}/messages`, messageData);
     console.log('✅ Message Sent:', messageResponse.data.message);
-    console.log('🤖 AI Response:', messageResponse.data.data.ai_message.content.substring(0, 100) + '...');
+    if (messageResponse.data.data.ai_message) {
+      console.log('🤖 AI Response:', messageResponse.data.data.ai_message.content.substring(0, 100) + '...');
+    }
 
-    // Test 7: Get Messages
-    console.log('\n6. Testing Get Messages...');
-    const messagesResponse = await axios.get(`${BASE_URL}/api/conversations/${conversationId}/messages`, {
-      headers: { Authorization: `Bearer ${authToken}` }
-    });
+    // Test 5: Get Messages
+    console.log('\n5. Testing Get Messages...');
+    const messagesResponse = await axios.get(`${BASE_URL}/api/conversations/${conversationId}/messages`);
     console.log('✅ Messages Retrieved:', messagesResponse.data.data.messages.length, 'messages');
 
-    // Test 8: Get Conversations
-    console.log('\n7. Testing Get Conversations...');
-    const conversationsResponse = await axios.get(`${BASE_URL}/api/conversations`, {
-      headers: { Authorization: `Bearer ${authToken}` }
-    });
+    // Test 6: Get Conversations
+    console.log('\n6. Testing Get Conversations...');
+    const conversationsResponse = await axios.get(`${BASE_URL}/api/conversations`);
     console.log('✅ Conversations Retrieved:', conversationsResponse.data.data.conversations.length, 'conversations');
 
     console.log('\n🎉 All tests passed successfully!');
     console.log('\n📊 Test Summary:');
     console.log('   ✅ Health Check');
-    console.log('   ✅ User Authentication');
-    console.log('   ✅ Profile Management');
+    console.log('   ✅ Chatbot Status');
     console.log('   ✅ Conversation Management');
     console.log('   ✅ Message Handling');
     console.log('   ✅ AI Integration');

@@ -3,7 +3,7 @@
  * Handles chatbot message processing with OpenAI integration and fallback responses
  */
 
-const axios = require('axios');
+const openaiService = require('../utils/openai');
 
 // AI Response Generator using OpenAI API with fallback
 const generateAIResponse = async (userMessage, config = {}) => {
@@ -16,46 +16,21 @@ const generateAIResponse = async (userMessage, config = {}) => {
     fallbackLink = '' 
   } = config;
   
-  // Check if OpenAI API key is configured
-  const openaiApiKey = process.env.OPENAI_API_KEY;
-  
-  if (!openaiApiKey) {
-    console.log('OpenAI API key not configured, using fallback response');
-    return generateFallbackResponse(userMessage, config);
-  }
-
   try {
-    // Create system prompt with context
-    const systemPrompt = `You are a helpful AI sales assistant for ${product}. Your main goal is to help users ${goal}. 
-If users are interested, direct them to: ${goalLink || 'schedule a meeting'}.
-If users are not interested, suggest they ${fallback} at: ${fallbackLink || 'our website'}.
-Be conversational, helpful, and focus on qualifying prospects and booking meetings.
-Keep responses concise and natural (under 150 words).`;
-
-    // Call OpenAI API
-    const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userMessage }
-        ],
-        max_tokens: 150,
-        temperature: 0.7,
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 10000, // 10 second timeout
-      }
-    );
-
-    return response.data.choices[0].message.content.trim();
+    // Try to use OpenAI API
+    const result = await openaiService.generateAIResponse(userMessage, {
+      model,
+      product,
+      goal,
+      goalLink,
+      fallback,
+      fallbackLink,
+    });
+    
+    return result.content;
   } catch (error) {
-    console.error('OpenAI API Error:', error.response?.data || error.message);
+    console.error('OpenAI API Error:', error.message);
+    console.log('Using fallback response generation');
     // Fallback to rule-based response on error
     return generateFallbackResponse(userMessage, config);
   }
@@ -183,7 +158,8 @@ const healthCheck = (req, res) => {
   res.json({
     success: true,
     message: 'Chatbot service is running',
-    openai_configured: !!process.env.OPENAI_API_KEY,
+    openai_configured: openaiService.isConfigured(),
+    openai_status: openaiService.getStatus(),
     timestamp: new Date().toISOString(),
   });
 };
@@ -192,5 +168,6 @@ module.exports = {
   chat,
   healthCheck,
   generateAIResponse, // Export for testing
-  generateFallbackResponse // Export for testing
+  generateFallbackResponse, // Export for testing
+  openaiService, // Export OpenAI service for testing
 };
