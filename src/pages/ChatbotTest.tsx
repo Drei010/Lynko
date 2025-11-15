@@ -19,15 +19,17 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp?: string; // Updated to string to match ISOString
+  usedFallback?: boolean; // Indicates if response is a fallback
+  source?: 'openai' | 'fallback' | 'client-fallback'; // Response source
 }
 
 // API Service for chatbot communication
 const apiService = {
-  sendChatMessage: async (message: string, model: string, systemPrompt?: string): Promise<{ reply: string }> => {
-    const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+  sendChatMessage: async (message: string, model: string, systemPrompt?: string): Promise<{ reply: string; usedFallback: boolean; source: string }> => {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
     
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chatbot/chat`, {
+      const response = await fetch(`${API_BASE_URL}/chatbot/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,11 +46,19 @@ const apiService = {
       }
 
       const data = await response.json();
-      return { reply: data.data.reply };
+      return { 
+        reply: data.data.reply,
+        usedFallback: data.data.usedFallback || false,
+        source: data.data.source || 'unknown'
+      };
     } catch (error) {
       console.error('API call failed, using fallback response:', error);
       // Fallback to simple response if API fails
-      return { reply: `I received your message: "${message}". The API is currently unavailable.` };
+      return { 
+        reply: `I received your message: "${message}". The API is currently unavailable.`,
+        usedFallback: true,
+        source: 'client-fallback'
+      };
     }
   }
 };
@@ -154,6 +164,8 @@ const ChatbotTest = () => {
         role: 'assistant',
         content: result.reply,
         timestamp: new Date().toISOString(),
+        usedFallback: result.usedFallback,
+        source: result.source as 'openai' | 'fallback' | 'client-fallback',
       };
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
@@ -247,6 +259,16 @@ const ChatbotTest = () => {
                         >
                           {message.role === "assistant" ? "AI Assistant" : "User"}
                         </span>
+                        {message.usedFallback && (
+                          <span className="text-xs px-2 py-1 rounded bg-yellow-900/30 text-yellow-200 border border-yellow-800">
+                            {message.source === 'client-fallback' ? 'Offline Response' : 'Fallback Response'}
+                          </span>
+                        )}
+                        {!message.usedFallback && message.source === 'openai' && (
+                          <span className="text-xs px-2 py-1 rounded bg-green-900/30 text-green-200 border border-green-800">
+                            AI Powered
+                          </span>
+                        )}
                       </div>
                       <p
                         className="text-sm text-gray-200"

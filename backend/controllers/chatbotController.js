@@ -27,12 +27,20 @@ const generateAIResponse = async (userMessage, config = {}) => {
       fallbackLink,
     });
     
-    return result.content;
+    return {
+      content: result.content,
+      usedFallback: false,
+      source: 'openai'
+    };
   } catch (error) {
     console.error('OpenAI API Error:', error.message);
     console.log('Using fallback response generation');
     // Fallback to rule-based response on error
-    return generateFallbackResponse(userMessage, config);
+    return {
+      content: generateFallbackResponse(userMessage, config),
+      usedFallback: true,
+      source: 'fallback'
+    };
   }
 };
 
@@ -131,16 +139,17 @@ const chat = async (req, res) => {
       ...(model && { model })
     };
 
-    // Generate AI response
-    const aiResponse = await generateAIResponse(message.trim(), chatConfig);
+    // Generate AI response (returns object with content, usedFallback, source)
+    const aiResponseData = await generateAIResponse(message.trim(), chatConfig);
 
     res.json({
       success: true,
       data: {
         userMessage: message,
-        reply: aiResponse,
+        reply: aiResponseData.content,
         timestamp: new Date().toISOString(),
-        usedFallback: !process.env.OPENAI_API_KEY,
+        usedFallback: aiResponseData.usedFallback,
+        source: aiResponseData.source,
       },
     });
   } catch (error) {

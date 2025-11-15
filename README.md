@@ -81,10 +81,16 @@ Lynko is a cutting-edge SaaS platform that empowers Sales Development Representa
 ## 📦 Installation & Setup
 
 ### Prerequisites
+
+**Required:**
 - **Node.js 18+** ([Download](https://nodejs.org/))
-- **PostgreSQL 12+** ([Download](https://www.postgresql.org/))
 - **OpenAI API Key** ([Get here](https://platform.openai.com/api-keys))
 - Git
+
+**Optional:**
+- **PostgreSQL 12+** ([Download](https://www.postgresql.org/)) - Only needed if you want to store conversation history
+
+✅ **The chatbot works perfectly without PostgreSQL!**
 
 ### ⚡ Quick Start (Recommended)
 
@@ -120,7 +126,7 @@ If you prefer to set up manually:
    cp backend/env.example backend/.env
    ```
 
-3. **Configure your OpenAI API key**
+3. **Configure your OpenAI API key** (Required for chatbot to work)
    ```bash
    # Edit backend/.env
    nano backend/.env
@@ -129,10 +135,20 @@ If you prefer to set up manually:
    Find and update:
    ```bash
    OPENAI_API_KEY=sk-your-actual-key-here
-   DATABASE_URL=postgresql://user:password@localhost:5432/lynko_dev
    ```
 
-4. **Create database** (optional - chatbot works without it)
+4. **Optional: Set up database for conversation history**
+   ```bash
+   # Configure database URL in backend/.env
+   nano backend/.env
+   ```
+   
+   Update:
+   ```bash
+   DATABASE_URL=postgresql://user:password@localhost:5432/lynko_dev
+   ```
+   
+   Then create database and run migrations:
    ```bash
    createdb lynko_dev
    cd backend && npm run migrate && cd ..
@@ -140,12 +156,14 @@ If you prefer to set up manually:
 
 5. **Start the servers**
    ```bash
-   # Terminal 1: Backend
+   # Terminal 1: Backend (works with or without database)
    cd backend && npm start
 
    # Terminal 2: Frontend
    npm run dev
    ```
+   
+   ✅ **Your chatbot is ready to use at http://localhost:3000**
 
 ## 🤖 OpenAI Integration
 

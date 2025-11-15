@@ -56,8 +56,8 @@ class ApiService {
   }
 
   // Chatbot method
-  async sendChatMessage(message: string, model: string = 'gpt-3.5-turbo'): Promise<{ reply: string }> {
-    const response = await this.request<{ reply: string }>('/chatbot/chat', {
+  async sendChatMessage(message: string, model: string = 'gpt-3.5-turbo'): Promise<{ reply: string; usedFallback: boolean; source: string }> {
+    const response = await this.request<{ reply: string; usedFallback: boolean; source: string }>('/chatbot/chat', {
       method: 'POST',
       body: JSON.stringify({ message, model }),
     });

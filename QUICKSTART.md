@@ -5,8 +5,9 @@ Get Lynko running locally in seconds!
 ## Prerequisites
 
 - **Node.js 18+** ([Download](https://nodejs.org/))
-- **PostgreSQL** ([Download](https://www.postgresql.org/download/))
 - **OpenAI API Key** ([Get here](https://platform.openai.com/api-keys))
+
+**That's it!** No database needed. PostgreSQL is optional if you want to store conversation history.
 
 ## ⚡ Quick Start (One Command)
 
@@ -38,46 +39,45 @@ The `start.sh` script automatically:
 2. ✅ Creates `.env` file if missing (from `env.example`)
 3. ✅ Installs dependencies if needed
 4. ✅ Creates `.env.development` for frontend
-5. ✅ Starts backend on port 5000
+5. ✅ Starts backend on port 5000 (chatbot ready WITHOUT database!)
 6. ✅ Starts frontend on port 3000
 7. ✅ Runs health checks
 8. ✅ Opens a nice dashboard with links
 
 ## 📝 First Time Setup
 
-### 1. Set Up Backend Environment
+### 1. Set Up Backend Environment (Just OpenAI!)
 
-The script automatically creates `.env` from `env.example`, but you need to add your real values:
+The script automatically creates `.env` from `env.example`, but you need to add your OpenAI key:
 
 ```bash
 nano backend/.env
 ```
 
-Required fields:
+**Required field only:**
 ```bash
-# Your PostgreSQL database connection
-DATABASE_URL=postgresql://username:password@localhost:5432/lynko_dev
-
 # Your OpenAI API key (get from https://platform.openai.com/api-keys)
 OPENAI_API_KEY=sk-proj-...
-
-# Other settings (usually fine as-is)
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=your_password
-DB_NAME=lynko_dev
 ```
 
-### 2. Create Database (if needed)
+**That's all you need!** The chatbot is ready to use.
+
+### 2. Optional: Set Up Database for Conversation History
+
+If you want to store conversation history, set up PostgreSQL:
 
 ```bash
-# Connect to PostgreSQL
-psql postgres
+# Install PostgreSQL
+sudo apt install postgresql postgresql-contrib
 
 # Create database
-CREATE DATABASE lynko_dev;
+sudo -u postgres createdb lynko_dev
 
+# Add to backend/.env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/lynko_dev
+
+# Run migrations
+cd backend && npm run migrate
 # Exit
 \q
 ```

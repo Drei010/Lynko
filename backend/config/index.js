@@ -49,11 +49,12 @@ const config = {
 
 // Validate required environment variables in production
 if (config.nodeEnv === 'production') {
-  const requiredEnvVars = ['DATABASE_URL'];
+  const requiredEnvVars = ['OPENAI_API_KEY'];
   const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
   
   if (missingVars.length > 0) {
     console.error('❌ Missing required environment variables:', missingVars);
+    console.error('   OPENAI_API_KEY is required for the chatbot to function');
     process.exit(1);
   }
 }

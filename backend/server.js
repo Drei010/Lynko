@@ -108,16 +108,17 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 const startServer = async () => {
   try {
     // Try database connection, but don't fail if unavailable
+    let dbConnected = false;
     try {
-      await testConnection();
-      console.log('✅ Database connected');
+      dbConnected = await testConnection();
     } catch (dbError) {
-      console.log('⚠️  Database not available - chatbot will work without auth features');
+      console.log('⚠️  Database not available - chatbot will work without database features');
       console.log('   (This is normal if you haven\'t set up PostgreSQL)');
     }
     
-    // Start the server
-    const server = app.listen(config.port, '0.0.0.0', () => {
+    // Start the server (regardless of database connection)
+    // Listen on all interfaces - can be accessed via localhost, 127.0.0.1, or 0.0.0.0
+    const server = app.listen(config.port, () => {
       console.log('🚀 Lynko Chatbot Backend Started');
       console.log(`📍 Environment: ${config.nodeEnv}`);
       console.log(`🌐 Server running on port ${config.port}`);
@@ -125,6 +126,11 @@ const startServer = async () => {
       console.log(`🤖 Chatbot API:`);
       console.log(`   POST /api/chatbot/chat - Send message to chatbot`);
       console.log(`   GET  /api/chatbot/health - Chatbot health check`);
+      if (dbConnected) {
+        console.log(`📊 Database: Connected`);
+      } else {
+        console.log(`📊 Database: Not connected (chatbot will work without it)`);
+      }
     });
 
     // Handle server errors
